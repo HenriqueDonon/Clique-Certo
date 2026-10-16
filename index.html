@@ -1,0 +1,638 @@
+<title>Clique Seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@600;800&display=swap">
+<style>
+/* Layout: uma "área de trabalho" com ícones, janelas de e-mail/Teams e barra de tarefas. Fonte legível para leigos. */
+:root{--bg:#06172a;--ink:#12202e;--mute:#566679;--line:#d6e0ec;--paper:#fff;--soft:#eef3f9;--accent:#1d63d8;--ok:#1f7a4d;--okbg:#e2f4e9;--bad:#b3261e;--badbg:#fde8e6;--warn:#ffe9a8;--tb:#071a2e;--f:'Atkinson Hyperlegible',system-ui,sans-serif;--m:'IBM Plex Mono',ui-monospace,monospace;color-scheme:light}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.5 var(--f);overflow:hidden}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer}
+mark{background:none;color:inherit}
+#app{position:relative;height:100%;overflow:hidden;background:radial-gradient(900px 520px at 12% 0%,#0f4a8f 0,transparent 62%),radial-gradient(800px 560px at 95% 100%,#0a6a8c 0,transparent 60%),var(--bg)}
+.screen{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto}
+.card{--pad:28px;background:var(--paper);border-radius:18px;max-width:560px;width:100%;padding:var(--pad);box-shadow:0 24px 70px #0009,0 0 0 1px #5aa9ff33;overflow:hidden;position:relative}
+.card h1{font-size:2rem;line-height:1.1;margin:0 0 8px;text-wrap:balance}
+.card p{margin:8px 0}
+.cfg{display:grid;gap:6px;margin:16px 0;padding:14px;background:var(--soft);border-radius:10px}
+.cfg label{font-weight:700;font-size:.9rem}
+.cfg input{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);min-width:0;width:100%}
+.cfg input:focus-visible{outline:3px solid #f2b705;border-color:var(--accent)}
+.steps{list-style:none;padding:0;margin:16px 0;display:grid;gap:10px}
+.steps li{display:flex;gap:12px;align-items:flex-start}
+.steps i{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4d94ff,#1d63d8);color:#fff;font-style:normal;font-weight:700;display:grid;place-items:center}
+.b{border:2px solid #1b57bd;background:linear-gradient(180deg,#3b82f6,#1d63d8);color:#fff;border-radius:12px;padding:14px 20px;font-weight:700;min-height:52px;box-shadow:0 3px 0 #123d8a,0 10px 22px #1d63d833;transition:transform .08s,box-shadow .08s,filter .15s}
+.b:hover{filter:brightness(1.08)}
+.b:active{transform:translateY(2px);box-shadow:0 1px 0 #123d8a,0 4px 10px #1d63d833}
+.b:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #f2b705;outline-offset:2px}
+.b.go{background:#fff;color:var(--ok);border-color:var(--ok);box-shadow:0 3px 0 #b9dcc8}
+.b.stop{background:linear-gradient(180deg,#e5483f,#b3261e);border-color:#962019;box-shadow:0 3px 0 #6d1510}
+.b.ghost{background:none;color:var(--accent);border-color:transparent;text-decoration:underline;min-height:40px;box-shadow:none}
+.b.neu{background:#fff;color:var(--accent);border-color:var(--accent);box-shadow:0 3px 0 #c3d3f0}
+#desk{position:absolute;inset:0}
+#icons{position:absolute;left:16px;top:16px;display:grid;gap:14px}
+.ico{position:relative;width:96px;background:none;border:0;color:#fff;text-align:center;padding:8px 4px;border-radius:10px}
+.ico:hover{background:#ffffff22}
+.ico svg{width:56px;height:56px;display:block;margin:0 auto 6px;filter:drop-shadow(0 6px 10px #0007);transition:transform .15s}
+.ico:hover svg{transform:translateY(-3px)}
+.ico span.t{display:inline-block;font-weight:700;background:#06172a99;padding:1px 9px;border-radius:8px}
+.badge{position:absolute;top:2px;right:10px;min-width:26px;height:26px;border-radius:13px;background:var(--bad);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.9rem;padding:0 6px}
+.badge.pulse{animation:pl 1.2s infinite}
+@keyframes pl{50%{transform:scale(1.25)}}
+.win{position:absolute;left:50%;top:16px;bottom:68px;width:min(980px,calc(100% - 32px));transform:translateX(-50%);background:var(--paper);border-radius:14px;box-shadow:0 30px 80px #000a,0 0 0 1px #ffffff26;display:flex;flex-direction:column;overflow:hidden}
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 10px 16px;background:linear-gradient(180deg,#14396a,#0b2442);color:#fff;font-weight:700}
+.tbar button{border:0;background:none;color:#fff;font-size:1.6rem;line-height:1;padding:4px 12px;border-radius:6px}
+.tbar button:hover{background:#ffffff26}
+.split{flex:1;display:grid;grid-template-columns:280px minmax(0,1fr);min-height:0}
+.list{border-right:1px solid var(--line);overflow:auto;background:var(--soft)}
+.row{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:12px 14px}
+.row.sel{background:#fff;box-shadow:inset 4px 0 0 var(--accent)}
+.row b{display:block}
+.row small{display:block;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tag{display:inline-block;margin-top:2px;font-size:.8rem;font-weight:700;padding:1px 8px;border-radius:10px}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}
+.row.new b::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-right:6px}
+.empty{padding:24px;color:var(--mute)}
+.detail{overflow:auto;padding:20px 24px;min-width:0;position:relative}
+.back{display:none;border:0;background:none;color:var(--accent);font-weight:700;padding:0 0 10px}
+.detail h2{margin:0 0 12px;font-size:1.35rem;line-height:1.25;text-wrap:balance}
+.from{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#d6e7ff,#9cc4ff);color:#0b2a63;font-weight:700;display:grid;place-items:center}
+.addr{font:.85rem var(--m);color:var(--mute);overflow-wrap:anywhere}
+.dbody{max-width:62ch;overflow-wrap:anywhere}
+.dbody p{margin:0 0 12px}
+.lnk{color:#0b57d0;text-decoration:underline;cursor:pointer}
+.att{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:.9rem var(--m);margin-top:6px}
+.bubble{background:var(--soft);border-radius:4px 16px 16px 16px;padding:14px 16px;max-width:52ch}
+.done mark.clue,.clue-on,.done .att.clue{background:var(--warn);box-shadow:0 0 0 3px var(--warn);border-radius:2px}
+.check{margin:20px 0 12px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--soft);max-width:62ch}
+.check summary{cursor:pointer;font-weight:700}
+.check ol{margin:8px 0 0;padding-left:22px}
+.hint{background:var(--warn);border-radius:8px;padding:10px 14px;margin:10px 0;max-width:62ch}
+.decide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:62ch}
+.res{border-radius:12px;padding:16px 18px;margin:20px 0 8px;max-width:62ch}
+.res.okk{background:var(--okbg);border:2px solid var(--ok)}
+.res.no{background:var(--badbg);border:2px solid var(--bad)}
+.res h3{margin:0 0 6px}
+.res ul{margin:6px 0;padding-left:20px}
+.res p{margin:8px 0}
+#stat{position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;padding:12px 16px;background:#10252f;color:#fff;font-size:.95rem;overflow-wrap:anywhere}
+#stat code{font-family:var(--m)}#stat b{color:#ffd966}
+#stat[hidden]{display:none}
+#pop{position:absolute;inset:0;background:#0007;display:grid;place-items:center;padding:16px;z-index:5}
+.popw{background:#fff;border:4px solid var(--bad);border-radius:8px;max-width:520px;width:100%;box-shadow:0 20px 60px #000a;overflow:hidden}
+.popw header{background:var(--bad);color:#fff;font-weight:700;padding:8px 14px}
+.popw .in{padding:18px 20px}
+.popw h3{margin:0 0 8px;color:var(--bad);font-size:1.4rem}
+#toast{position:absolute;right:16px;bottom:68px;max-width:min(360px,calc(100% - 32px));background:#fff;border-left:6px solid var(--accent);border-radius:8px;padding:12px 16px;box-shadow:0 10px 30px #0007;z-index:4;text-align:left;color:#16242c;font:inherit;cursor:pointer;border-top:0;border-right:0;border-bottom:0;animation:up .35s}
+@keyframes up{from{transform:translateY(20px);opacity:0}}
+#toast b{display:block}
+#bar{position:absolute;left:0;right:0;bottom:0;height:52px;background:#06172af2;border-top:1px solid #ffffff22;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px;z-index:3}
+#bar .brand{font-weight:700;letter-spacing:.04em;white-space:nowrap}
+#tasks{flex:1;display:flex;gap:6px}
+#tasks button{background:#ffffff22;color:#fff;border:0;border-bottom:3px solid #35c8ff;padding:6px 14px;border-radius:6px}
+.meter{display:flex;align-items:center;gap:8px;font-size:.85rem;white-space:nowrap}
+.meter i{display:block;width:90px;height:10px;border-radius:5px;background:#ffffff33;overflow:hidden}
+.meter i b{display:block;height:100%;background:#5bd48b;transition:width .5s,background .5s}
+#clock{font:.9rem var(--m)}
+.big{font-size:3rem;font-weight:800;line-height:1.1;font-family:'Sora',var(--f);background:linear-gradient(100deg,#1d63d8,#2cc3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.miss{margin:8px 0;padding-left:20px}
+.rules{background:var(--soft);border-radius:10px;padding:12px 16px 12px 36px;margin:12px 0}
+.hud{display:flex;gap:6px;align-items:center;font-weight:700;white-space:nowrap}
+.hud b{font-family:var(--m);display:inline-block;font-size:1.15rem;color:#fff}
+#st{background:#f2b705;color:#2b2100;border-radius:10px;padding:0 8px;font-size:.8rem}
+#st:empty{display:none}
+#mute{background:#ffffff22;color:#fff;border:0;border-radius:6px;padding:6px 10px;font-size:.85rem}
+#fx{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:6}
+.sp{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:9}
+.res{animation:pop .3s}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+.decide{animation:unl .6s}
+@keyframes unl{from{opacity:.35}}
+.pts{font-weight:700;font-size:1.1rem;color:var(--ok);margin:0 0 6px}
+.eyebrow{margin:0 0 6px;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.mini{font-size:.9rem;color:var(--mute);margin:6px 0}
+.cfg input::placeholder{color:#8d9aa3;opacity:1}
+.splash{color:#fff;text-align:center;cursor:pointer}
+.spn{font-size:clamp(2.4rem,10vw,5.5rem);font-weight:800;font-family:'Sora',var(--f);line-height:1.05;text-wrap:balance;margin:6px 0 18px;animation:up .8s;text-shadow:0 0 40px #2f8cff}
+#qrBox svg{width:min(300px,72vw);height:auto;background:#fff;padding:8px;border-radius:10px;border:1px solid var(--line);display:block;margin:12px auto}
+#app::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#5aa9ff14 1px,transparent 1px),linear-gradient(90deg,#5aa9ff14 1px,transparent 1px);background-size:42px 42px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 78%)}
+.hero{margin:calc(var(--pad)*-1) calc(var(--pad)*-1) 22px;padding:30px 20px 22px;text-align:center;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 50% 0%,#1a5bb5 0,#0b2a52 55%,#071a2e 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(#7cc4ff14 1px,transparent 1px),linear-gradient(90deg,#7cc4ff14 1px,transparent 1px);background-size:26px 26px;-webkit-mask-image:linear-gradient(#000,transparent 90%);mask-image:linear-gradient(#000,transparent 90%)}
+.hero>*{position:relative}
+.hero .lt{margin:0;font-family:'Sora',var(--f);font-size:clamp(2.1rem,9.5vw,3.1rem);line-height:1.08;letter-spacing:-.02em;font-weight:800;background:linear-gradient(100deg,#b4efff 0%,#47b4ff 50%,#86ecff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 20px #2f8cff88)}
+.hero .lt .c{font-weight:600}
+.hero .lu{display:block;width:min(320px,82%);height:auto;margin:6px auto 0;overflow:visible}
+.hero .tg{margin:12px 0 0;color:#9fd4f5;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.hero.sm{padding:18px 16px 14px;margin-bottom:18px}
+.hero.sm .lt{font-size:1.5rem}
+.lu .ln{stroke-dasharray:140;animation:draw 1s .25s both}
+@keyframes draw{from{stroke-dashoffset:140}}
+.lu .sh{transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 7px #35c8ffaa);animation:pop2 .6s .1s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop2{from{transform:scale(.3);opacity:0}}
+.splash>div{position:relative}
+.splash::before{content:"";position:absolute;inset:0;margin:auto;width:min(80vmin,560px);height:min(80vmin,560px);border-radius:50%;border:1px solid #46b2ff55;box-shadow:0 0 0 clamp(30px,8vmin,70px) #46b2ff0f,0 0 0 clamp(60px,16vmin,140px) #46b2ff08;animation:ring 2.4s ease-out both}
+@keyframes ring{from{transform:scale(.6);opacity:0}}
+#desk::before{content:"";position:absolute;right:-30px;bottom:50px;width:min(460px,62vw);aspect-ratio:6/7;pointer-events:none;opacity:.12;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 28'%3E%3Cpath d='M12 1l9 3.5V13c0 6-4 10-9 13-5-3-9-7-9-13V4.5z' fill='none' stroke='%2335c8ff' stroke-width='.5'/%3E%3C/svg%3E") center/contain no-repeat}
+.brand{display:flex;align-items:center;gap:8px}
+.hud span{color:#9fd4f5}
+.b.ghost:active{transform:none}
+.dash{align-items:start;justify-items:center;color:#fff}
+.dwrap{width:min(1000px,100%);display:grid;gap:14px}
+.dhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.dhead h2{margin:0;font-family:'Sora',var(--f);font-size:clamp(1.6rem,5vw,2.4rem)}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.dstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.dtile,.dcard{background:#0c2340d9;border:1px solid #2b5d86;border-radius:14px;padding:14px 16px;min-width:0}
+.dtile b{display:block;font:800 2rem/1.1 'Sora',var(--f);background:linear-gradient(100deg,#b4efff,#47b4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dtile span{color:#9fd4f5;font-size:.9rem}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.dcard h3{margin:0 0 10px;font-size:.85rem;color:#9fd4f5;letter-spacing:.1em;text-transform:uppercase}
+.dcard ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.rk{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;gap:4px 8px;align-items:center}
+.rk span{overflow-wrap:anywhere}
+.rk .bar{height:8px;border-radius:4px;background:#ffffff1f;overflow:hidden;grid-column:2/4}
+.rk .bar i{display:block;height:100%;background:linear-gradient(90deg,#2cc3ff,#3b82f6)}
+.hd{display:grid;gap:2px}.hd small,.rk small{color:#9fd4f5}
+.dmsg{color:#9fd4f5;min-height:1.2em}
+#certDl{box-sizing:border-box}
+@media (max-width:720px){
+ .split{grid-template-columns:minmax(0,1fr)}
+ .split.det .list,.split:not(.det) .detail{display:none}
+ .back{display:block}
+ .win{width:auto;left:16px;right:16px;transform:none}
+ #icons{grid-auto-flow:column}
+ .decide{grid-template-columns:1fr}
+ .meter span,#clock,#bar .brand,.hud span:not(#st){display:none}
+ .meter i{width:56px}
+ .detail{padding:16px}
+
+ .card{--pad:22px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+ <div class="screen dash" id="dash" hidden>
+  <div class="dwrap">
+   <div class="dhead"><div><div class="eyebrow" style="color:#9fd4f5">Painel da turma</div><h2 id="dName"></h2></div><div class="dbtns"><button class="b neu" id="dCsv">Baixar planilha</button><button class="b neu" id="dBack">Voltar</button></div></div>
+   <div class="dmsg" id="dMsg"></div>
+   <div class="dstats" id="dStats"></div>
+   <div class="dgrid"><section class="dcard"><h3>Ranking</h3><ol id="dRank"></ol></section><section class="dcard"><h3>Onde mais erraram</h3><ol id="dHard"></ol></section></div>
+  </div>
+ </div>
+ <div class="screen" id="cert" hidden>
+  <div class="card" style="text-align:center;max-width:720px">
+   <p class="eyebrow">Seu certificado</p>
+   <img id="certImg" alt="Certificado de conclusão" style="width:100%;height:auto;border-radius:8px;border:1px solid var(--line);display:block">
+   <p class="mini">Toque e segure a imagem para salvar no celular.</p>
+   <div style="display:grid;gap:8px"><a class="b" id="certDl" download="certificado-clique-seguro.png" style="text-decoration:none;text-align:center;display:block">Baixar imagem</a><button class="b ghost" id="certBack">Voltar</button></div>
+  </div>
+ </div>
+ <div class="screen" id="setup" hidden>
+  <div class="card">
+   <div class="hero sm"><div class="lt">Clique Seguro</div></div>
+   <p class="eyebrow">Modo apresentador</p>
+   <h1>Personalize o jogo</h1>
+   <p>Digite a empresa e gere o QR Code. Quem escanear já entra no jogo com o nome e os e-mails da empresa.</p>
+   <div class="cfg"><label for="inNome">Nome da empresa</label><input id="inNome" placeholder="ex.: Ativa Security" maxlength="40" autocomplete="off"><label for="inDom">Final do e-mail da empresa (depois do @)</label><input id="inDom" placeholder="ex.: ativasecurity.com.br" autocomplete="off" inputmode="url" autocapitalize="none"></div>
+   <p class="mini" id="domHint"></p>
+   <button class="b" id="gen" style="width:100%">Gerar QR Code</button>
+   <button class="b ghost" id="lastDash" hidden style="width:100%"></button>
+  </div>
+ </div>
+ <div class="screen" id="qrs" hidden>
+  <div class="card" style="text-align:center">
+   <div class="hero sm"><div class="lt">Clique Seguro</div></div>
+   <p class="eyebrow">Escaneie com o celular</p>
+   <h1 id="qrName"></h1>
+   <div id="qrBox"></div>
+   <p class="mini" id="qrLink" style="overflow-wrap:anywhere"></p>
+   <p class="mini" id="dashLink" style="overflow-wrap:anywhere"></p>
+   <p class="mini" id="fbNote" hidden style="color:var(--bad)"></p>
+   <div style="display:grid;gap:8px;margin-top:8px"><button class="b ghost" id="copyl">Copiar link do jogo</button><button class="b neu" id="btnDash">Abrir painel da turma</button><button class="b ghost" id="copyd">Copiar link do painel</button><button class="b" id="goPlay">Continuar para o jogo</button><button class="b ghost" id="backCfg">Mudar empresa</button></div>
+  </div>
+ </div>
+ <div class="screen splash" id="splash" hidden>
+  <div><p class="eyebrow" style="color:#9fd4e6">Treinamento de segurança digital</p><div class="spn" id="spName"></div><p class="mini" style="color:#9fd4e6">Toque para continuar</p></div>
+ </div>
+ <div class="screen" id="intro" hidden>
+  <div class="card">
+   <div class="hero">
+    <h1 class="lt"><span class="c">Clique</span> Seguro</h1>
+    <svg class="lu" viewBox="0 0 320 42" role="img" aria-label="Escudo de segurança">
+     <defs>
+      <linearGradient id="lg1" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="132" y2="0"><stop offset="0" stop-color="#35c8ff" stop-opacity="0"/><stop offset="1" stop-color="#35c8ff"/></linearGradient>
+      <linearGradient id="lg2" gradientUnits="userSpaceOnUse" x1="188" y1="0" x2="316" y2="0"><stop offset="0" stop-color="#35c8ff"/><stop offset="1" stop-color="#35c8ff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6fdcff"/><stop offset="1" stop-color="#1d63d8"/></linearGradient>
+     </defs>
+     <path class="ln" d="M4 22H132" stroke="url(#lg1)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+     <path class="ln" d="M188 22H316" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+     <path class="ln" d="M104 22V12H88" stroke="#35c8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".85"/>
+     <circle cx="85" cy="12" r="2.8" fill="#35c8ff"/>
+     <path class="ln" d="M216 22V12H232" stroke="#35c8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".85"/>
+     <circle cx="235" cy="12" r="2.8" fill="#35c8ff"/>
+     <g class="sh"><path d="M160 3 L177 9.5 V21 C177 30.5 169.5 35.5 160 39 C150.5 35.5 143 30.5 143 21 V9.5 Z" fill="url(#sg)" stroke="#c4f1ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M151.5 21 l6 6 l11 -12.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+    <p class="tg">Treinamento de segurança digital</p>
+   </div>
+   <p>Hoje é seu primeiro dia na <b id="nm">Ativa Security</b>. Seu trabalho é ler as mensagens que chegam no computador e decidir se são verdadeiras ou golpes.</p>
+   <ul class="steps">
+    <li><i>1</i><span>Uma mensagem chega e você abre pelo ícone na tela.</span></li>
+    <li><i>2</i><span>Leia com calma. Você não precisa entender de computador.</span></li>
+    <li><i>3</i><span>Escolha: <b>parece seguro</b> ou <b>é golpe</b>. Depois mostramos os sinais.</span></li>
+   </ul>
+   <p style="color:var(--mute);font-size:.95rem">É só um jogo. Nada aqui é real e nenhum dado seu é usado.</p>
+   <div class="cfg"><label for="inPlayer">Seu nome ou apelido</label><input id="inPlayer" placeholder="ex.: Maria" maxlength="30" autocomplete="off"><p class="mini" id="nameErr" hidden style="color:var(--bad);margin:0">Digite seu nome para começar.</p><p class="mini" style="margin:0">Ele aparece no seu certificado e para quem conduz o treinamento.</p></div>
+   <button class="b" id="start" style="width:100%">Começar o expediente</button>
+  </div>
+ </div>
+
+ <div id="desk" hidden>
+  <div id="icons"></div>
+  <section class="win" id="win" hidden></section>
+  <div id="pop" hidden></div>
+  <div id="fx"></div>
+  <button id="toast" hidden></button>
+  <div id="bar">
+   <span class="brand"><svg viewBox="0 0 24 28" width="18" height="21" aria-hidden="true"><path d="M12 1l9 3.5V13c0 6-4 10-9 13-5-3-9-7-9-13V4.5z" fill="#35c8ff"/><path d="M7.5 13.5l3.2 3.2 6-6.8" fill="none" stroke="#06172a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="brand">ATIVA SECURITY PC</span></span>
+   <div id="tasks"></div>
+   <div class="hud"><b id="sc">0</b><span>pts</span><span id="st"></span></div>
+   <div class="meter"><span>Segurança da empresa</span><i><b id="mb" style="width:100%"></b></i><strong id="mv">100%</strong></div>
+   <button id="mute" aria-label="Ligar ou desligar o som">Som</button>
+   <span id="clock">09:00</span>
+  </div>
+  <div class="screen" id="end" hidden></div>
+ </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+/* ===== CONFIGURAÇÃO (opcional) =====
+ Para ativar o painel da turma, cole abaixo os dados do app web do Firebase
+ (Console do Firebase > Configurações do projeto > Seus apps > Config).
+ Sem isso o jogo funciona normalmente, só não envia resultados.
+ PUBLIC_URL: endereço público do jogo, se usar domínio próprio (ex.: 'https://treino.ativasecurity.com.br/'). */
+const FB={apiKey:'AIzaSyAnhxp6ZFClK444gO7H9agTDz7w01-vy1Y',authDomain:'clique-certo-4d160.firebaseapp.com',projectId:'clique-certo-4d160',appId:'1:676633305699:web:ea943d4e80d3e1d411ce56'};
+const PUBLIC_URL='';
+const BASE=[
+{id:1,app:'mail',phish:false,name:'Marcos Teixeira',addr:'marcos.teixeira@nortelog.com.br',subj:'Reunião de equipe amanhã às 10h',
+ body:'<p>Oi! Só lembrando da nossa reunião de equipe amanhã, às 10h, na sala 2. Vamos falar das metas do mês.</p><p>Se não puder ir, me avise até o fim do dia.</p><p>Abraço,<br>Marcos</p>',
+ hint:'Olhe o endereço de quem enviou. Ele é da sua empresa? A mensagem pede algo estranho?',
+ why:['O endereço termina em <b>@nortelog.com.br</b>, o mesmo da sua empresa.','Não pede senha, dinheiro nem clique em link.','Nem tudo é golpe: a maioria das mensagens do dia a dia é verdadeira.']},
+{id:2,app:'mail',phish:true,badAddr:1,name:'Suporte Microsoft',addr:'suporte@microsoft-seguranca-conta.com',subj:'URGENTE: sua conta será bloqueada em 24 horas',
+ body:'<p>Prezado usuário,</p><p>Detectamos <mark class="clue">atividade incomum</mark> na sua conta. <mark class="clue">Sua conta será bloqueada em 24 horas</mark> se você não confirmar seus dados.</p><p><mark class="clue"><a class="lnk" href="#" data-url="http://login-microsoft365.verificar-conta.top/entrar">Verificar minha conta agora</a></mark></p><p>Equipe de Segurança</p>',
+ hint:'Passe o mouse sobre o link (sem clicar) e leia o endereço que aparece na barra preta, embaixo.',
+ why:['O endereço do remetente não é da Microsoft, só tem um nome parecido.','Cria pressa ("24 horas") para você não pensar.','O link leva para <b>verificar-conta.top</b>, não para a Microsoft.','Empresas sérias não pedem seus dados por e-mail.'],
+ risk:'Você entregaria sua senha para criminosos.'},
+{id:3,app:'mail',phish:false,name:'Suporte de TI',addr:'ti@nortelog.com.br',subj:'Manutenção programada no sistema',
+ body:'<p>Olá, equipe!</p><p>No sábado, das 22h às 23h, o sistema interno ficará fora do ar para manutenção.</p><p><b>Você não precisa fazer nada.</b> Só evite deixar trabalho para esse horário.</p><p>Atenciosamente,<br>Equipe de TI</p>',
+ hint:'Esta mensagem pede alguma coisa a você? Senha, código, clique?',
+ why:['Vem do endereço da empresa (@nortelog.com.br).','É só um aviso: não pede senha, código nem clique.']},
+{id:4,app:'teams',phish:true,name:'Fernanda Lopes',role:'Financeiro',subj:'Fernanda Lopes',
+ body:'<p>Oi! Tudo bem? Acabei de te mandar um <mark class="clue">código por SMS</mark> sem querer. <mark class="clue">Me passa ele rapidinho?</mark> Preciso entrar no sistema agora e estou sem tempo!</p>',
+ hint:'Códigos que chegam no seu celular servem para entrar na SUA conta. Alguém de confiança precisaria deles?',
+ why:['O código por SMS abre a <b>sua</b> conta. Quem pede esse código está tentando entrar nela.','Nunca passe códigos de verificação a ninguém, nem a colegas.','A pressa é sinal clássico de golpe. A conta da Fernanda pode ter sido invadida.'],
+ risk:'O criminoso entraria na sua conta com o código.'},
+{id:5,app:'mail',phish:true,badAddr:1,name:'Correios Entregas',addr:'avisos@correios-encomendas.info',subj:'Encomenda retida: pague a taxa de R$ 4,90',
+ body:'<p>Sua encomenda <b>BR482910553</b> está retida no centro de distribuição.</p><p>Pague a taxa de <mark class="clue">R$ 4,90</mark> em até <mark class="clue">24 horas</mark> ou ela será devolvida.</p><p><mark class="clue"><a class="lnk" href="#" data-url="http://correios-rastreio.info/pagar-taxa">Pagar taxa agora</a></mark></p>',
+ hint:'Você comprou algo e espera uma entrega? Passe o mouse no link e veja o endereço.',
+ why:['O endereço termina em <b>.info</b>. Os Correios usam correios.com.br.','Taxa pequena e prazo curto é um golpe comum para roubar dados do cartão.','Se você não esperava encomenda, desconfie.'],
+ risk:'Os dados do seu cartão seriam roubados.'},
+{id:6,app:'mail',phish:false,name:'RH Nortelog',addr:'rh@nortelog.com.br',subj:'Pesquisa de clima: leva 3 minutos',
+ body:'<p>Olá! Queremos saber como você está se sentindo na empresa.</p><p><a class="lnk" href="#" data-url="https://intranet.nortelog.com.br/pesquisa-clima">Responder a pesquisa</a></p><p>Não pedimos senha nem dados pessoais. Obrigado!<br>RH</p>',
+ hint:'Esta tem link. Passe o mouse e veja o trecho em destaque na barra: ele é da sua empresa?',
+ why:['O remetente é da empresa.','O link leva para <b>intranet.nortelog.com.br</b>, que é um site da própria Nortelog.','Não pede senha, dinheiro nem dados pessoais.']},
+{id:7,app:'mail',phish:true,badAddr:1,attBad:1,name:'Financeiro Atacadão Silva',addr:'cobranca@atacadaosilva-financeiro.com',subj:'Fatura em atraso: abra o anexo',att:'fatura_outubro.pdf.exe',
+ body:'<p>Prezado cliente,</p><p>Segue a fatura em atraso. <mark class="clue">Abra o anexo</mark> para ver os valores e evitar protesto.</p>',
+ hint:'Olhe o nome do anexo até o final. Em que ele termina?',
+ why:['O arquivo termina em <b>.exe</b>. É um programa, não um PDF.','Você não conhece essa empresa nem esperava uma fatura.','A ameaça de "protesto" serve para causar medo.'],
+ risk:'Um vírus seria instalado no computador.'},
+{id:8,app:'popup',phish:true,name:'Alerta de segurança',subj:'Alerta',opts:{go:'Limpar agora',stop:'Fechar a janela'},
+ body:'<h3>SEU COMPUTADOR ESTÁ INFECTADO!</h3><p><mark class="clue">7 vírus encontrados.</mark> Seus dados serão apagados em 5 minutos.</p><p>Clique em <b>Limpar agora</b> ou ligue para <mark class="clue">0800 000 0000</mark>.</p>',
+ hint:'Um site da internet consegue mesmo ver o que tem dentro do seu computador?',
+ why:['Antivírus de verdade não avisa por janelas de sites.','Sites não enxergam vírus no seu computador: é mentira para assustar.','Clicar ou ligar levaria você a instalar um programa falso ou pagar à toa.','Na dúvida, apenas feche a janela e avise a TI.'],
+ risk:'Você instalaria um programa falso e poderia perder dinheiro.'},
+{id:9,app:'mail',phish:true,badAddr:1,name:'Ricardo Nogueira (Diretor)',addr:'ricardo.nogueira.diretoria@gmail.com',subj:'Preciso de um favor urgente',
+ body:'<p>Oi, estou em reunião e não posso falar ao telefone.</p><p>Preciso que você faça um <mark class="clue">PIX de R$ 8.500</mark> hoje para um fornecedor novo. Te passo os detalhes depois.</p><p><mark class="clue">Seja discreto e não comente com ninguém.</mark></p><p>Ricardo</p>',
+ hint:'O nome é de um diretor. Mas o endereço dele é da empresa?',
+ why:['O nome é do diretor, mas o endereço é <b>@gmail.com</b>, não o da empresa.','Pedido de dinheiro com pressa e segredo é o "golpe do falso chefe".','Mesmo que pareça real, confirme por telefone ou pessoalmente antes de pagar.'],
+ risk:'A empresa perderia R$ 8.500.'},
+{id:10,app:'teams',phish:false,name:'Marcos Teixeira',role:'Operações',subj:'Marcos Teixeira',
+ body:'<p>Subi a planilha de metas na pasta do time. Quando puder, dá uma olhada!</p>',
+ hint:'Ele pede algo estranho, como código, senha ou dinheiro?',
+ why:['É um colega que você conhece, falando de trabalho normal.','Não pede código, senha, dinheiro nem clique em link estranho.']},
+{id:11,app:'mail',phish:true,badAddr:1,name:'Sorteio Premiado',addr:'premio@sorteio-brasil-ganhe.com',subj:'Parabéns! Você ganhou um smartphone',
+ body:'<p>Você foi sorteado(a) entre 1 milhão de pessoas!</p><p>Resgate seu <b>smartphone novo</b> agora, <mark class="clue">só hoje</mark>:</p><p><mark class="clue"><a class="lnk" href="#" data-url="http://bit.ly/3xPr3m10">Resgatar prêmio</a></mark></p>',
+ hint:'Você se lembra de ter participado de algum sorteio? Veja o endereço do link.',
+ why:['Você não participou de sorteio nenhum. Ninguém dá prêmio por e-mail do nada.','O link é encurtado (bit.ly) e esconde para onde você vai.','"Só hoje" é pressa para você não pensar.'],
+ risk:'Você entregaria seus dados ou instalaria algo perigoso.'},
+{id:12,app:'mail',phish:false,name:'RH Nortelog',addr:'rh@nortelog.com.br',subj:'Seu holerite de setembro está disponível',
+ body:'<p>Olá! O holerite de setembro já está disponível no portal do colaborador.</p><p>Acesse pelo site da empresa, do jeito de sempre.</p><p>RH</p>',
+ hint:'Há links ou pedidos de senha? Veja como a mensagem orienta o acesso.',
+ why:['Remetente da empresa.','Não traz link: pede que você entre pelo caminho de sempre. Esse é o jeito mais seguro.']},
+{id:13,app:'teams',phish:true,badAddr:1,name:'Suporte de TI',role:'Externo · fora da sua empresa',subj:'Suporte de TI',
+ body:'<p>Olá! Aqui é da TI. Detectamos um problema no seu computador. <mark class="clue">Instale o AnyDesk e me passe o código de 9 números</mark> para eu consertar agora.</p>',
+ hint:'Olhe embaixo do nome. Quem pede para controlar o seu computador é da sua empresa?',
+ why:['O contato é <b>externo</b>. A TI de verdade abre chamado e fala com você pelos canais da empresa.','O código do AnyDesk dá controle total do seu computador a quem o recebe.','"Problema no computador" e pressa servem para você agir sem pensar.'],
+ risk:'Um criminoso controlaria seu computador e veria tudo.'},
+{id:14,app:'teams',phish:false,name:'Carla Mendes',role:'Gestão',subj:'Carla Mendes',
+ body:'<p>Pessoal, o almoço de confraternização é sexta, às 12h, no restaurante aqui ao lado. Me confirmem presença por aqui!</p>',
+ hint:'Ela pede alguma coisa estranha? Código, senha, dinheiro, link?',
+ why:['É uma colega da empresa falando de um assunto normal.','Não pede código, senha, dinheiro nem clique em link.']},
+{id:15,app:'teams',phish:true,name:'Bruno Alves',role:'Operações',subj:'Bruno Alves',
+ body:'<p>Oi! Meu acesso ao sistema travou e tenho entrega hoje. <mark class="clue">Me empresta sua senha rapidinho?</mark> Devolvo depois, prometo!</p>',
+ hint:'Ele é colega de verdade. Mesmo assim, é certo passar a sua senha?',
+ why:['Senha é pessoal. Nem colega, nem chefe, nem a TI devem pedir a sua.','Tudo que for feito com a sua senha fica no seu nome.','Diga para ele abrir um chamado na TI. É o caminho certo.'],
+ risk:'Ações feitas por ele ficariam no seu nome e a senha poderia vazar.'},
+{id:16,app:'teams',phish:true,name:'Thiago Lima',role:'Comercial',subj:'Thiago Lima',
+ body:'<p>Pessoal, achei o <b>Photoshop completo de graça</b>! <mark class="clue">Baixa aqui e instala</mark>, é só ignorar os avisos do antivírus:</p><p><mark class="clue"><a class="lnk" href="#" data-url="http://baixar-programas-gratis.xyz/photoshop-crack.exe">Baixar Photoshop grátis</a></mark></p>',
+ hint:'Programa pago de graça: qual é o preço escondido? Veja o link.',
+ why:['Programas pagos "de graça" costumam vir com vírus escondidos.','Mandar ignorar o antivírus é sinal claro de perigo.','Instalar programas é com a TI. Se precisar de um, peça a ela.','O colega pode ter caído sem perceber, ou ter a conta invadida.'],
+ risk:'Um vírus seria instalado e poderia se espalhar pela empresa.'},
+{id:17,app:'popup',phish:true,win:'janela do sistema',name:'Dispositivo USB',subj:'USB',opts:{go:'Abrir os arquivos',stop:'Retirar e levar à TI'},
+ body:'<h3>PENDRIVE CONECTADO</h3><p>Você achou um pendrive no estacionamento e ligou no computador. Nome: <mark class="clue">SALARIOS_2026</mark></p><p>Contém 3 arquivos.</p>',
+ hint:'Por que alguém deixaria um pendrive com esse nome no estacionamento?',
+ why:['Pendrive achado é isca: o nome chamativo faz você abrir por curiosidade.','Ao abrir, pode instalar um vírus sozinho.','O certo é nem ligar. Entregue à TI.'],
+ risk:'Um vírus seria instalado no computador.'},
+{id:18,app:'popup',phish:true,win:'celular',name:'Aprovar login?',subj:'Login',opts:{go:'Aprovar',stop:'Negar e avisar a TI'},
+ body:'<h3>TENTATIVA DE LOGIN NA SUA CONTA</h3><p>Local: <mark class="clue">Moscou, Rússia</mark></p><p>Esta é a <mark class="clue">5ª notificação em 2 minutos.</mark> Você não tentou entrar agora.</p>',
+ hint:'Você acabou de tentar entrar em algum lugar?',
+ why:['Se você não tentou entrar, alguém está tentando com a sua senha.','Criminosos mandam várias notificações esperando que você aprove só para parar. Isso é cansaço de aprovação.','Sempre negue e avise a TI para trocar sua senha.'],
+ risk:'O criminoso entraria na sua conta.'},
+{id:19,app:'popup',phish:true,win:'extensão do navegador',name:'Extensão quer acesso',subj:'Extensão',opts:{go:'Permitir',stop:'Negar'},
+ body:'<h3>"SUPER LEITOR DE PDF" PEDE PERMISSÃO</h3><p>Para funcionar, ela pede para <mark class="clue">ler e alterar todos os seus dados em todos os sites</mark>, incluindo e-mail e banco.</p>',
+ hint:'Para abrir um PDF, ela precisa ver o seu banco?',
+ why:['Um leitor de PDF não precisa ver todos os sites que você visita.','Com essa permissão, ela poderia roubar senhas e e-mails.','Só instale extensões liberadas pela TI e negue permissões demais.'],
+ risk:'A extensão roubaria suas senhas e dados.'},
+{id:20,app:'teams',phish:false,name:'Suporte de TI',role:'TI',subj:'Suporte de TI',
+ body:'<p>Oi! Seu chamado <b>#4821</b> (impressora) foi concluído. Se o problema voltar, abra outro chamado pelo portal de chamados.</p>',
+ hint:'O contato é da empresa? Ele pede senha, código ou acesso ao seu computador?',
+ why:['O contato é da empresa (sem aviso de externo).','Só avisa que um chamado seu foi concluído. Não pede senha, código nem acesso ao computador.']},
+{id:21,app:'teams',phish:false,name:'Beatriz Souza',role:'Financeiro',subj:'Beatriz Souza',
+ body:'<p>Bom dia! Consegue me mandar o relatório de vendas até as 16h? Antes disso, sem pressa.</p>',
+ hint:'É um pedido normal de trabalho?',
+ why:['É uma colega que você conhece, com um pedido de trabalho normal.','Não pede código, senha, dinheiro nem link.']}
+];
+let ITEMS=BASE;
+const RULES=['Olhe <b>quem enviou</b>. O endereço é mesmo da empresa?','Desconfie de <b>pressa, medo e prêmios</b>.','<b>Passe o mouse no link</b> antes de clicar e leia o trecho antes da primeira barra.','Nunca passe <b>códigos ou senhas</b>, nem faça pagamentos só porque uma mensagem pediu.','Na dúvida, <b>confirme por outro canal</b> (telefone, pessoalmente) e avise a TI.','<b>Não instale programas</b>, não ligue pendrives achados e negue aprovações que você não pediu.'];
+const $=s=>document.querySelector(s);
+let EMP='Ativa Security',RAWN='Ativa Security',DOM='ativasecurity.com.br',QURL='',DURL='',SID='',PNAME='',PID='',DB_UNSUB=null,LASTP=[],RES=null;
+const ART_URL='https://claude.ai/artifact/WTmXE8YxQVxWSfcXNGLPbP';
+const BASE_URL=PUBLIC_URL||(/\.github\.io$/.test(location.hostname)?location.origin+location.pathname:ART_URL);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const cleanDom=t=>t.toLowerCase().replace(/^https?:\/\//,'').replace(/^.*@/,'').replace(/^www\./,'').replace(/[\/\s].*$/,'').replace(/[^a-z0-9.-]/g,'');
+function walk(v){return typeof v==='string'?v.split('intranet.nortelog.com.br').join('pesquisa.'+DOM).split('nortelog.com.br').join(DOM).split('Nortelog').join(EMP):Array.isArray(v)?v.map(walk):v&&typeof v==='object'?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,walk(x)])):v;}
+function setCfg(n,d){RAWN=n;EMP=esc(n);DOM=d;ITEMS=walk(BASE);$('#brand').textContent=n.toUpperCase()+' PC';$('#nm').textContent=n;$('#spName').textContent=n;$('#qrName').textContent=n;}
+const b64=t=>btoa(unescape(encodeURIComponent(t))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64=t=>decodeURIComponent(escape(atob(t.replace(/-/g,'+').replace(/_/g,'/'))));
+const SCR=['setup','qrs','splash','intro','dash','cert'];
+function show(id){SCR.forEach(i=>{$('#'+i).hidden=i!==id;});$('#desk').hidden=true;if(id!=='dash'&&DB_UNSUB){DB_UNSUB();DB_UNSUB=null;}}
+const rid=n=>{const a='abcdefghjkmnpqrstuvwxyz23456789';let r='';for(let i=0;i<n;i++)r+=a[Math.floor(Math.random()*a.length)];return r;};
+function readCfg(){const n=($('#inNome').value||'').replace(/\|/g,'').trim().slice(0,40);let d=cleanDom($('#inDom').value||'');if(n&&!d)d=(slug(n)||'empresa')+'.com.br';return{n:n,d:d};}
+function hint(){const c=readCfg();$('#domHint').textContent=c.n?'E-mails de exemplo no jogo: nome@'+c.d:'';}
+function fromHash(){try{const h=location.hash.replace(/^#/,'');if(!h)return null;
+ if(h.indexOf('painel~')===0)return{dash:h.slice(7).replace(/[^a-z0-9]/g,'')};
+ const p=unb64(h).split('|');if(p[0]&&p[1])return{n:p[0].slice(0,40),d:cleanDom(p[1])||'empresa.com.br',sid:(p[2]||'').replace(/[^a-z0-9]/g,'')};}catch(e){}return null;}
+
+/* ---- Firebase (só carrega se FB estiver preenchido) ---- */
+function loadScript(u){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+function fbInit(){
+ if(!FB.apiKey||!FB.projectId)return Promise.resolve(null);
+ const go=()=>{try{if(!firebase.apps.length)firebase.initializeApp(FB);return firebase.firestore();}catch(e){return null;}};
+ if(window.firebase&&firebase.firestore)return Promise.resolve(go());
+ const B='https://www.gstatic.com/firebasejs/10.12.2/';
+ return loadScript(B+'firebase-app-compat.js').then(()=>loadScript(B+'firebase-firestore-compat.js')).then(go).catch(()=>null);
+}
+const dbp=fbInit();
+function sendProgress(done){
+ if(!SID||!PID)return;
+ dbp.then(db=>{if(!db)return;
+  const answers={};let hits=0;Object.keys(S.res).forEach(k=>{answers[k]=S.res[k].ok?1:0;if(S.res[k].ok)hits++;});
+  db.collection('cs_sessions').doc(SID).collection('players').doc(PID).set({nome:PNAME,score:S.score,hits:hits,answered:Object.keys(S.res).length,total:ITEMS.length,shield:Math.max(0,S.shield),best:S.best,done:!!done,answers:answers,t:Date.now()},{merge:true}).catch(()=>{});
+ });
+}
+
+/* ---- Telas de apresentador ---- */
+let spT=0;
+function splash(c){if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>show('intro'),2600);}
+function copyText(btn,txt,label){const ok=()=>{btn.textContent='Copiado';setTimeout(()=>{btn.textContent=label;},1800);};try{navigator.clipboard.writeText(txt).then(ok).catch(()=>{});}catch(e){}}
+function genQR(){
+ const c=readCfg();
+ if(!c.n){$('#inNome').focus();$('#domHint').textContent='Digite o nome da empresa para continuar.';return;}
+ setCfg(c.n,c.d);SID=rid(8);
+ QURL=BASE_URL+'#'+b64(c.n+'|'+c.d+'|'+SID);DURL=BASE_URL+'#painel~'+SID;
+ $('#qrLink').textContent='Link do jogo: '+QURL;$('#dashLink').textContent='Link do painel: '+DURL;
+ $('#fbNote').hidden=!!FB.apiKey;$('#fbNote').textContent='Painel da turma desativado: falta configurar o Firebase no início do arquivo do jogo.';
+ dbp.then(db=>{if(db)db.collection('cs_sessions').doc(SID).set({empresa:c.n,dominio:c.d,criadoEm:Date.now()}).catch(()=>{});});
+ try{localStorage.setItem('cs_last',JSON.stringify({sid:SID,n:c.n}));}catch(e){}
+ let svg='';try{const q=qrcode(0,'M');q.addData(QURL);q.make();svg=q.createSvgTag({cellSize:5,margin:2,scalable:true});}catch(e){}
+ $('#qrBox').innerHTML=svg||'<p class="mini">Não foi possível desenhar o QR Code. Copie o link abaixo.</p>';
+ show('qrs');
+}
+
+/* ---- Painel da turma ---- */
+const lbl=id=>{const x=BASE[id-1];return x?(x.app==='popup'?x.name:x.subj):'Mensagem '+id;};
+function demoPlayers(){let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;const names=['Ana','Bruno','Carla','Diego','Eduarda','Fábio','Gabi','Henrique','Isabela','João','Karina','Lucas','Marina','Nelson'];const hard={13:.6,15:.55,16:.5,17:.45,18:.7,19:.65,5:.4,9:.35,2:.3};
+ return names.map(n=>{const ans={};let sc=0,h=0,st=0,best=0;BASE.forEach(x=>{const ok=r()>(hard[x.id]||.12)?1:0;ans[x.id]=ok;if(ok){h++;st++;best=Math.max(best,st);sc+=100+25*Math.min(st,8);}else st=0;});return{nome:n,score:sc,hits:h,answered:BASE.length,total:BASE.length,shield:100,best:best,done:true,answers:ans};});}
+function openDash(sid,name){
+ show('dash');$('#dName').textContent=name||'Turma '+sid;$('#dMsg').textContent='Carregando...';LASTP=[];renderDash([]);
+ if(sid==='demo'){$('#dName').textContent='Turma de exemplo';$('#dMsg').textContent='Dados de exemplo, só para ver como fica.';renderDash(demoPlayers());return;}
+ dbp.then(db=>{
+  if(!db){$('#dMsg').textContent=FB.apiKey?'Não foi possível conectar ao Firebase.':'O painel precisa do Firebase configurado no início do arquivo do jogo.';return;}
+  db.collection('cs_sessions').doc(sid).get().then(d=>{if(d.exists&&d.data().empresa)$('#dName').textContent=d.data().empresa;}).catch(()=>{});
+  DB_UNSUB=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));$('#dMsg').textContent=a.length?'':'Aguardando os primeiros jogadores...';renderDash(a);},()=>{$('#dMsg').textContent='Sem permissão ou sem conexão com o painel.';});
+ });
+}
+function renderDash(a){
+ LASTP=a;const n=a.length,done=a.filter(p=>p.done).length;
+ const ans=a.reduce((t,p)=>t+(p.answered||0),0),hit=a.reduce((t,p)=>t+(p.hits||0),0);
+ const avg=n?Math.round(a.reduce((t,p)=>t+(p.score||0),0)/n):'–';
+ $('#dStats').innerHTML=[[n,'jogadores'],[done,'concluíram'],[ans?Math.round(hit/ans*100)+'%':'–','de acertos da turma'],[avg,'pontos em média']].map(t=>'<div class="dtile"><b>'+t[0]+'</b><span>'+t[1]+'</span></div>').join('');
+ const rk=a.slice().sort((x,y)=>(y.score||0)-(x.score||0)).slice(0,10),mx=Math.max(1,...rk.map(p=>p.score||0));
+ $('#dRank').innerHTML=rk.length?rk.map((p,i)=>'<li class="rk"><b>'+(i+1)+'º</b><span>'+esc(p.nome||'?')+(p.done?'':' <small>(jogando)</small>')+'</span><b>'+(p.score||0)+'</b><div class="bar"><i style="width:'+Math.round((p.score||0)/mx*100)+'%"></i></div></li>').join(''):'<li class="dmsg">Sem jogadores ainda.</li>';
+ const t={};a.forEach(p=>Object.keys(p.answers||{}).forEach(k=>{t[k]=t[k]||{n:0,e:0};t[k].n++;if(!p.answers[k])t[k].e++;}));
+ const hd=Object.keys(t).filter(k=>t[k].n>=Math.min(2,n)&&t[k].e>0).sort((x,y)=>t[y].e/t[y].n-t[x].e/t[x].n).slice(0,5);
+ $('#dHard').innerHTML=hd.length?hd.map(k=>{const x=BASE[k-1];return '<li class="hd"><span>'+esc(lbl(+k))+'</span><small>'+Math.round(t[k].e/t[k].n*100)+'% erraram · '+(x&&x.phish?'era golpe':'era verdadeira')+'</small></li>';}).join(''):'<li class="dmsg">Ainda sem erros para mostrar.</li>';
+}
+function dashCsv(){
+ const rows=[['Nome','Pontos','Acertos','Respondidas','Total','Melhor sequência','Concluiu']].concat(LASTP.slice().sort((x,y)=>(y.score||0)-(x.score||0)).map(p=>[p.nome,p.score,p.hits,p.answered,p.total,p.best,p.done?'sim':'não']));
+ const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='painel-clique-seguro.csv';document.body.appendChild(a);a.click();a.remove();}catch(e){}
+}
+
+/* ---- Certificado ---- */
+async function makeCert(){
+ try{await Promise.all([document.fonts.load('800 80px Sora'),document.fonts.load('700 30px Sora'),document.fonts.load('400 30px "Atkinson Hyperlegible"'),document.fonts.load('700 30px "Atkinson Hyperlegible"')]);}catch(e){}
+ const W=1600,H=1130,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ let g=x.createLinearGradient(0,0,W,300);g.addColorStop(0,'#0b2a52');g.addColorStop(1,'#1d63d8');x.fillStyle=g;x.fillRect(0,0,W,300);
+ x.strokeStyle='rgba(124,196,255,.14)';x.lineWidth=1;for(let i=0;i<=W;i+=40){x.beginPath();x.moveTo(i,0);x.lineTo(i,300);x.stroke();}for(let j=0;j<=300;j+=40){x.beginPath();x.moveTo(0,j);x.lineTo(W,j);x.stroke();}
+ x.save();x.translate(W/2-38.4,58);x.scale(3.2,3.2);
+ let sg=x.createLinearGradient(0,0,24,28);sg.addColorStop(0,'#6fdcff');sg.addColorStop(1,'#1d63d8');x.fillStyle=sg;x.fill(new Path2D('M12 1l9 3.5V13c0 6-4 10-9 13-5-3-9-7-9-13V4.5z'));
+ x.strokeStyle='#c4f1ff';x.lineWidth=.6;x.stroke(new Path2D('M12 1l9 3.5V13c0 6-4 10-9 13-5-3-9-7-9-13V4.5z'));
+ x.strokeStyle='#fff';x.lineWidth=2.2;x.lineCap='round';x.lineJoin='round';x.stroke(new Path2D('M7.5 13.5l3.2 3.2 6-6.8'));x.restore();
+ x.textAlign='center';x.textBaseline='alphabetic';
+ x.fillStyle='#fff';x.font='800 56px Sora, sans-serif';x.fillText('Clique Seguro',W/2,205);
+ x.fillStyle='#9fd4f5';x.font='700 26px Sora, sans-serif';try{x.letterSpacing='6px';}catch(e){}x.fillText('CERTIFICADO DE CONCLUSÃO',W/2,260);try{x.letterSpacing='0px';}catch(e){}
+ x.fillStyle='#566679';x.font='400 38px "Atkinson Hyperlegible", sans-serif';x.fillText('Certificamos que',W/2,410);
+ let nm=PNAME||'Participante',fs=100;x.font='800 '+fs+'px Sora, sans-serif';while(x.measureText(nm).width>1300&&fs>40){fs-=4;x.font='800 '+fs+'px Sora, sans-serif';}
+ x.fillStyle='#0b2a52';x.fillText(nm,W/2,540);
+ let lg=x.createLinearGradient(350,0,1250,0);lg.addColorStop(0,'rgba(53,200,255,0)');lg.addColorStop(.5,'#2f8cff');lg.addColorStop(1,'rgba(53,200,255,0)');x.fillStyle=lg;x.fillRect(350,572,900,4);
+ x.fillStyle='#12202e';x.font='400 38px "Atkinson Hyperlegible", sans-serif';x.fillText('concluiu o treinamento de conscientização em segurança digital',W/2,650);
+ x.font='700 44px "Atkinson Hyperlegible", sans-serif';x.fillStyle='#1d63d8';x.fillText(RAWN,W/2,716);
+ const R=RES||{hit:0,total:0,score:0,rank:''},bx=[['Acertos',R.hit+' de '+R.total],['Pontuação',String(R.score)],['Nível',R.rank]];
+ bx.forEach((b,i)=>{const X=130+i*(420+40);x.fillStyle='#eef3f9';x.beginPath();x.roundRect?x.roundRect(X,790,420,150,22):x.rect(X,790,420,150);x.fill();
+  x.fillStyle='#1d63d8';let f=56;x.font='800 '+f+'px Sora, sans-serif';while(x.measureText(b[1]).width>380&&f>26){f-=3;x.font='800 '+f+'px Sora, sans-serif';}x.fillText(b[1],X+210,865);
+  x.fillStyle='#566679';x.font='400 28px "Atkinson Hyperlegible", sans-serif';x.fillText(b[0],X+210,912);});
+ x.textAlign='left';x.fillStyle='#566679';x.font='400 28px "Atkinson Hyperlegible", sans-serif';x.fillText('Emitido em '+new Date().toLocaleDateString('pt-BR'),130,1040);
+ x.textAlign='right';x.fillText('Treinamento Clique Seguro · '+RAWN,W-130,1040);
+ let bg=x.createLinearGradient(0,0,W,0);bg.addColorStop(0,'#0b2a52');bg.addColorStop(1,'#2cc3ff');x.fillStyle=bg;x.fillRect(0,H-14,W,14);
+ return c.toDataURL('image/png');
+}
+
+$('#inNome').addEventListener('input',hint);
+$('#inDom').addEventListener('input',hint);
+$('#inPlayer').addEventListener('input',()=>{$('#nameErr').hidden=true;});
+$('#inPlayer').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
+addEventListener('hashchange',()=>{const c=fromHash();if(!c)return;if(c.dash)openDash(c.dash);else if($('#desk').hidden)splash(c);});
+try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){const b=$('#lastDash');b.hidden=false;b.textContent='Reabrir painel: '+l.n;b.dataset.sid=l.sid;b.dataset.n=l.n;}}catch(e){}
+{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else show('setup');}
+let S;
+const ICON={mail:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aaaff"/><stop offset="1" stop-color="#1d4fd8"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gm)"/><rect x="11" y="16" width="34" height="25" rx="4" fill="#fff"/><path d="M12 19l16 12 16-12" fill="none" stroke="#1d63d8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>',teams:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a7cff"/><stop offset="1" stop-color="#4a3fd0"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gt)"/><rect x="10" y="12" width="36" height="26" rx="8" fill="#fff"/><path d="M18 38v8l9-8z" fill="#fff"/><circle cx="20" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="28" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="36" cy="25" r="2.8" fill="#5b4fe0"/></svg>'};
+const NAME={mail:'E-mail',teams:'Teams'};
+const av=n=>n.replace(/\(.*\)/,'').trim().split(' ').map(w=>w[0]).slice(0,2).join('');
+const it=id=>ITEMS[id-1];
+let AC=null,muted=false;
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}return AC;}
+function tone(f,t0,d,type,v){const a=ac();if(!a||muted)return;try{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type||'sine';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v||.15,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05);}catch(e){}}
+const tick=()=>tone(520,0,.05,'triangle',.07);
+const ping=()=>{tone(988,0,.1,'sine',.1);tone(1318,.09,.18,'sine',.1);};
+function good(st){const k=1+.06*Math.min(st,8);tone(660*k,0,.12,'triangle',.16);tone(880*k,.08,.12,'triangle',.16);tone(1320*k,.16,.3,'triangle',.16);}
+function bad(){tone(190,0,.3,'sawtooth',.1);tone(140,.14,.4,'sawtooth',.1);try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}}
+function win(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.3,'triangle',.16));burst(innerWidth/2,innerHeight/3,60);}
+function burst(x,y,n){if(RM)return;const cols=['#5bd48b','#f2b705','#6cc4e0','#ff7a59','#fff'];for(let i=0;i<n;i++){const d=document.createElement('i');d.className='sp';d.style.cssText='left:'+x+'px;top:'+y+'px;background:'+cols[i%cols.length];document.body.appendChild(d);const a=Math.random()*6.283,r=60+Math.random()*140;d.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:'translate('+Math.cos(a)*r+'px,'+(Math.sin(a)*r+80)+'px) rotate('+Math.random()*720+'deg)',opacity:0}],{duration:700+Math.random()*500,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>d.remove();}}
+function flash(c){if(RM)return;const f=$('#fx');f.style.background=c;f.animate([{opacity:.4},{opacity:0}],{duration:450});}
+function shake(){if(RM)return;const t=$('#pop').hidden?$('#win'):document.querySelector('.popw');if(!t||t.hidden)return;try{t.animate([{translate:'0'},{translate:'-10px'},{translate:'10px'},{translate:'-6px'},{translate:'6px'},{translate:'0'}],{duration:350});}catch(e){}}
+function updHud(){$('#sc').textContent=S.score;$('#st').textContent=S.streak>1?'x'+S.streak:'';if(!RM)$('#sc').animate([{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:300});}
+
+function init(){S={arrived:[],res:{},hints:{},cur:0,open:null,sel:null,det:false,shield:100,time:540,pend:null,score:0,streak:0,best:0,lock:0};const r=ITEMS.slice(1).map(i=>i.id);for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}S.order=[1].concat(r);}
+function clock(){const h=Math.floor(S.time/60),m=S.time%60;$('#clock').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
+function setShield(){const v=Math.max(0,S.shield);$('#mb').style.width=v+'%';$('#mb').style.background=v>60?'#5bd48b':v>30?'#f2b705':'#ef5b4f';$('#mv').textContent=v+'%';}
+
+function next(){
+ if(S.cur>=ITEMS.length)return finish();
+ const x=it(S.order[S.cur++]);S.arrived.push(x.id);S.pend=x.id;S.lock=Date.now()+700;S.time+=7+Math.floor(Math.random()*8);clock();
+ ping();
+ if(x.app==='popup'){showPop(x);}
+ else if(S.cur>1){S.open=x.app;S.sel=x.id;S.det=true;$('#toast').hidden=true;}
+ else{const t=$('#toast');t.hidden=false;
+  t.innerHTML='<b>'+(x.app==='mail'?'Novo e-mail':'Nova mensagem no Teams')+'</b>'+x.name+'<br><small>Clique aqui para abrir</small>';
+  t.onclick=()=>{t.hidden=true;S.open=x.app;S.sel=x.id;S.det=true;render();};}
+ render();
+}
+function render(){
+ const un=a=>S.arrived.filter(i=>it(i).app===a&&!S.res[i]).length;
+ $('#icons').innerHTML=['mail','teams'].map(a=>'<button class="ico" data-act="app" data-app="'+a+'">'+ICON[a]+'<span class="t">'+NAME[a]+'</span>'+(un(a)?'<span class="badge pulse">'+un(a)+'</span>':'')+'</button>').join('');
+ $('#tasks').innerHTML=S.open?'<button data-act="app" data-app="'+S.open+'">'+NAME[S.open]+'</button>':'';
+ const w=$('#win');
+ if(S.open&&S.pend&&it(S.pend).app===S.open)$('#toast').hidden=true;
+ if(!S.open){w.hidden=true;return;}
+ const app=S.open,items=S.arrived.map(it).filter(x=>x.app===app).reverse();
+ if(!S.sel||it(S.sel).app!==app)S.sel=items.length?items[0].id:null;
+ const list=items.length?items.map(x=>{const r=S.res[x.id];
+  return '<button class="row'+(x.id===S.sel?' sel':'')+(r?'':' new')+'" data-act="pick" data-id="'+x.id+'"><b>'+x.name+'</b><small>'+x.subj+'</small>'+(r?'<span class="tag '+(r.choice==='stop'?'bad':'ok')+'">'+(r.choice==='stop'?'Reportado':'Aprovado')+'</span>':'')+'</button>';}).join(''):'<div class="empty">Nenhuma mensagem ainda.</div>';
+ w.hidden=false;
+ w.innerHTML='<div class="tbar"><span>'+NAME[app]+' · '+EMP+'</span><button data-act="close" aria-label="Fechar janela">×</button></div><div class="split'+(S.det?' det':'')+'"><div class="list">'+list+'</div><div class="detail">'+(S.sel?detail(it(S.sel)):'<div class="empty">Escolha uma mensagem.</div>')+'</div></div><div id="stat" hidden></div>';
+ const r=w.querySelector('.res');if(r)r.scrollIntoView({block:'nearest'});
+}
+function actions(x){
+ const r=S.res[x.id],o=x.opts||{go:'Parece seguro',stop:'Reportar como golpe'};
+ if(r){const ok=(r.choice==='stop')===x.phish,last=S.cur>=ITEMS.length;
+  const t=x.phish?(ok?'Muito bem! Era golpe.':'Cuidado! Era golpe.'):(ok?'Correto! Esta mensagem é verdadeira.':'Esta mensagem era verdadeira.');
+  return '<div class="res '+(ok?'okk':'no')+'"><h3>'+t+'</h3>'+(ok?'<p class="pts">+'+r.pts+' pontos'+(r.st>1?' · sequência x'+r.st:'')+'</p>':'')+'<ul>'+x.why.map(y=>'<li>'+y+'</li>').join('')+'</ul>'+
+   (x.phish&&!ok?'<p><b>Se fosse real:</b> '+x.risk+'</p>':'')+
+   (x.phish?'<p><b>O que fazer:</b> não clique, não responda e avise a TI.</p>':(!ok?'<p>Desconfiar é bom, mas aqui não era preciso reportar.</p>':''))+
+   '<button class="b" data-act="cont">'+(last?'Ver meu resultado':'Continuar')+'</button></div>';}
+ return '<details class="check"'+(x.id===1?' open':'')+'><summary>Antes de decidir, pergunte-se</summary><ol><li>Quem enviou? É alguém que conheço, com endereço da empresa?</li><li>Está com pressa ou tentando me assustar?</li><li>Pede senha, código, dinheiro ou um clique?</li><li>Para onde o link leva de verdade? (passe o mouse)</li></ol></details>'+
+  '<div class="decide"><button class="b go" data-act="dec" data-id="'+x.id+'" data-c="go">'+o.go+'</button><button class="b stop" data-act="dec" data-id="'+x.id+'" data-c="stop">'+o.stop+'</button></div>'+
+  (S.hints[x.id]?'<div class="hint"><b>Dica:</b> '+x.hint+'</div>':'<button class="b ghost" data-act="hint">Quero uma dica</button>');
+}
+function detail(x){
+ const d=S.res[x.id];
+ const head='<button class="back" data-act="back">‹ Voltar à lista</button>';
+ if(x.app==='teams')return head+'<div class="from"><span class="av">'+av(x.name)+'</span><div><b>'+x.name+'</b><div class="addr'+(d&&x.badAddr?' clue-on':'')+'">'+x.role+(x.badAddr?'':' · Disponível')+'</div></div></div><div class="dbody'+(d?' done':'')+'"><div class="bubble">'+x.body+'</div></div>'+actions(x);
+ return head+'<h2>'+x.subj+'</h2><div class="from"><span class="av">'+av(x.name)+'</span><div><b>'+x.name+'</b><div class="addr'+(d&&x.badAddr?' clue-on':'')+'">'+x.addr+'</div></div></div><div class="dbody'+(d?' done':'')+'">'+x.body+(x.att?'<div class="att'+(x.attBad?' clue':'')+'">Anexo: '+x.att+'</div>':'')+'</div>'+actions(x);
+}
+function popHTML(x){
+ const r=S.res[x.id];
+ return '<div class="popw"><header>'+x.name+' · '+(x.win||'janela do navegador')+'</header><div class="in dbody'+(r?' done':'')+'">'+x.body+(r?actions(x):(function(){const g='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="go">'+x.opts.go+'</button>',t='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="stop">'+x.opts.stop+'</button>';return '<div class="decide">'+(x.id%2?g+t:t+g)+'</div>';})()+(S.hints[x.id]?'<div class="hint"><b>Dica:</b> '+x.hint+'</div>':'<button class="b ghost" data-act="hint">Quero uma dica</button>'))+'</div></div>';
+}
+function showPop(x){const p=$('#pop');p.hidden=false;p.innerHTML=popHTML(x);}
+function dec(id,c,ev){
+ const x=it(id);if(!x||S.res[id]||Date.now()<S.lock)return;
+ const ok=(c==='stop')===x.phish;let pts=0;
+ if(ok){S.streak++;S.best=Math.max(S.best,S.streak);pts=Math.max(50,100+25*Math.min(S.streak,8)-(S.hints[id]?50:0));S.score+=pts;}
+ else{S.streak=0;S.shield-=x.phish?12:4;}
+ S.res[id]={choice:c,ok,pts,st:S.streak};sendProgress(false);
+ setShield();updHud();
+ if(x.app==='popup')showPop(x);else render();
+ const px=(ev&&ev.clientX)||innerWidth/2,py=(ev&&ev.clientY)||innerHeight/2;
+ if(ok){good(S.streak);flash('#5bd48b');burst(px,py,14+Math.min(S.streak,8)*3);}
+ else{bad();flash('#ef5b4f');shake();}
+}
+function finish(){
+ $('#pop').hidden=true;$('#win').hidden=true;$('#toast').hidden=true;
+ const ids=Object.keys(S.res),hit=ids.filter(i=>S.res[i].ok).length,miss=ids.filter(i=>!S.res[i].ok).map(i=>it(+i));
+ const rank=S.shield>=100?'Guardião da '+EMP:S.shield>=60?'Profissional atento':'Em treinamento';
+ RES={hit:hit,total:ITEMS.length,score:S.score,rank:S.shield>=100?'Guardião':S.shield>=60?'Profissional atento':'Em treinamento'};sendProgress(true);
+ const e=$('#end');e.hidden=false;win();
+ e.innerHTML='<div class="card"><p style="margin:0;color:var(--mute)">Fim do expediente</p><div class="big">'+hit+' de '+ITEMS.length+'</div><p>mensagens avaliadas corretamente. Segurança da empresa: <b>'+Math.max(0,S.shield)+'%</b> · <b>'+rank+'</b></p><p class="pts">'+S.score+' pontos · melhor sequência: '+S.best+'</p>'+
+  (miss.length?'<p><b>Para rever:</b></p><ul class="miss">'+miss.map(m=>'<li>'+m.subj+' ('+(m.phish?'era golpe':'era verdadeira')+')</li>').join('')+'</ul>':'<p>Você não errou nenhuma. Parabéns!</p>')+
+  '<p><b>5 regras de ouro</b></p><ol class="rules">'+RULES.map(r=>'<li>'+r+'</li>').join('')+'</ol><button class="b" id="certBtn" style="width:100%;margin-bottom:8px">Gerar meu certificado</button><button class="b neu" id="again" style="width:100%">Jogar de novo</button></div>';
+}
+function start(){
+ const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
+ if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
+ PNAME=nm;PID=rid(10);
+ init();sendProgress(false);ac();updHud();$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
+
+document.addEventListener('click',e=>{
+ if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
+ if(e.target.closest('#splash')){clearTimeout(spT);show('intro');return;}
+ if(e.target.id==='gen')return genQR();
+ if(e.target.id==='copyl')return copyText(e.target,QURL,'Copiar link do jogo');
+ if(e.target.id==='copyd')return copyText(e.target,DURL,'Copiar link do painel');
+ if(e.target.id==='btnDash')return openDash(SID,RAWN);
+ if(e.target.id==='lastDash')return openDash(e.target.dataset.sid,e.target.dataset.n);
+ if(e.target.id==='dBack'){return show(QURL?'qrs':'setup');}
+ if(e.target.id==='dCsv')return dashCsv();
+ if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
+ if(e.target.id==='certBack'){$('#cert').hidden=true;$('#desk').hidden=false;return;}
+ if(e.target.id==='backCfg')return show('setup');
+ if(e.target.id==='goPlay'){const c=readCfg();c.sid=SID;return splash(c);}
+ if(e.target.id==='start'||e.target.id==='again')return start();
+ const l=e.target.closest('.lnk');
+ if(l){e.preventDefault();stat(l.dataset.url,true);return;}
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const a=b.dataset.act;tick();
+ if(a==='app'){S.open=b.dataset.app;S.det=false;const p=S.arrived.map(it).filter(x=>x.app===S.open&&!S.res[x.id]).pop();if(p){S.sel=p.id;S.det=true;}$('#toast').hidden=true;render();}
+ else if(a==='close'){S.open=null;render();}
+ else if(a==='pick'){S.sel=+b.dataset.id;S.det=true;render();}
+ else if(a==='back'){S.det=false;render();}
+ else if(a==='hint'){S.hints[S.pend]=1;it(S.pend).app==='popup'?showPop(it(S.pend)):render();}
+ else if(a==='dec')dec(+b.dataset.id,b.dataset.c,e);
+ else if(a==='cont'){const x=it(S.pend);if(x.app==='popup')$('#pop').hidden=true;S.pend=null;if(S.cur>=ITEMS.length)finish();else{render();setTimeout(next,250);}}
+});
+function stat(u,click){
+ const s=$('#stat');if(!s)return;
+ clearTimeout(stat.t);if(!u){s.hidden=true;return;}
+ const m=u.match(/^(https?:\/\/)([^\/]+)(.*)$/);
+ s.hidden=false;s.innerHTML='Este link leva para: <code>'+m[1]+'<b>'+m[2]+'</b>'+m[3]+'</code>'+(click?'<br><small>Aqui o link não abre. No dia a dia, só passe o mouse para ler o endereço.</small>':'');if(click)stat.t=setTimeout(()=>stat(null),4500);
+}
+document.addEventListener('mouseover',e=>{const l=e.target.closest('.lnk');if(l)stat(l.dataset.url);});
+document.addEventListener('mouseout',e=>{if(e.target.closest('.lnk'))stat(null);});
+</script>
