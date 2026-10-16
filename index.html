@@ -157,6 +157,11 @@ mark{background:none;color:inherit}
 .hd{display:grid;gap:2px}.hd small,.rk small{color:#9fd4f5}
 .dmsg{color:#9fd4f5;min-height:1.2em}
 #certDl{box-sizing:border-box}
+.hl{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px;max-height:50vh;overflow:auto}
+.hl li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+.hitem{text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--ink)}
+.hitem small{display:block;color:var(--mute)}
+.hdel{border:1px solid var(--line);background:#fff;border-radius:10px;padding:0 14px;font-size:1.3rem;color:var(--mute)}
 @media (max-width:720px){
  .split{grid-template-columns:minmax(0,1fr)}
  .split.det .list,.split:not(.det) .detail{display:none}
@@ -177,6 +182,7 @@ mark{background:none;color:inherit}
  <div class="screen dash" id="dash" hidden>
   <div class="dwrap">
    <div class="dhead"><div><div class="eyebrow" style="color:#9fd4f5">Painel da turma</div><h2 id="dName"></h2></div><div class="dbtns"><button class="b neu" id="dCsv">Baixar planilha</button><button class="b neu" id="dBack">Voltar</button></div></div>
+   <div class="dmsg" id="dWhen"></div>
    <div class="dmsg" id="dMsg"></div>
    <div class="dstats" id="dStats"></div>
    <div class="dgrid"><section class="dcard"><h3>Ranking</h3><ol id="dRank"></ol></section><section class="dcard"><h3>Onde mais erraram</h3><ol id="dHard"></ol></section></div>
@@ -190,6 +196,15 @@ mark{background:none;color:inherit}
    <div style="display:grid;gap:8px"><a class="b" id="certDl" download="certificado-clique-seguro.png" style="text-decoration:none;text-align:center;display:block">Baixar imagem</a><button class="b ghost" id="certBack">Voltar</button></div>
   </div>
  </div>
+ <div class="screen" id="hist" hidden>
+  <div class="card">
+   <div class="hero sm"><div class="lt">Clique Seguro</div></div>
+   <p class="eyebrow">Relatórios salvos</p>
+   <p class="mini">Do mais recente para o mais antigo, pela data e hora em que o QR foi gerado. A lista fica neste navegador; os resultados de cada turma ficam guardados no Firebase.</p>
+   <ol id="histList" class="hl"></ol>
+   <button class="b neu" id="histBack" style="width:100%">Voltar</button>
+  </div>
+ </div>
  <div class="screen" id="setup" hidden>
   <div class="card">
    <div class="hero sm"><div class="lt">Clique Seguro</div></div>
@@ -199,7 +214,7 @@ mark{background:none;color:inherit}
    <div class="cfg"><label for="inNome">Nome da empresa</label><input id="inNome" placeholder="ex.: Ativa Security" maxlength="40" autocomplete="off"><label for="inDom">Final do e-mail da empresa (depois do @)</label><input id="inDom" placeholder="ex.: ativasecurity.com.br" autocomplete="off" inputmode="url" autocapitalize="none"></div>
    <p class="mini" id="domHint"></p>
    <button class="b" id="gen" style="width:100%">Gerar QR Code</button>
-   <button class="b ghost" id="lastDash" hidden style="width:100%"></button>
+   <button class="b neu" id="histBtn" style="width:100%;margin-top:10px">Relatórios salvos</button>
   </div>
  </div>
  <div class="screen" id="qrs" hidden>
@@ -378,7 +393,7 @@ const BASE=[
 let ITEMS=BASE;
 const RULES=['Olhe <b>quem enviou</b>. O endereço é mesmo da empresa?','Desconfie de <b>pressa, medo e prêmios</b>.','<b>Passe o mouse no link</b> antes de clicar e leia o trecho antes da primeira barra.','Nunca passe <b>códigos ou senhas</b>, nem faça pagamentos só porque uma mensagem pediu.','Na dúvida, <b>confirme por outro canal</b> (telefone, pessoalmente) e avise a TI.','<b>Não instale programas</b>, não ligue pendrives achados e negue aprovações que você não pediu.'];
 const $=s=>document.querySelector(s);
-let EMP='Ativa Security',RAWN='Ativa Security',DOM='ativasecurity.com.br',QURL='',DURL='',SID='',PNAME='',PID='',DB_UNSUB=null,LASTP=[],RES=null;
+let BACKTO='setup',EMP='Ativa Security',RAWN='Ativa Security',DOM='ativasecurity.com.br',QURL='',DURL='',SID='',PNAME='',PID='',DB_UNSUB=null,LASTP=[],RES=null;
 const ART_URL='https://claude.ai/artifact/WTmXE8YxQVxWSfcXNGLPbP';
 const BASE_URL=PUBLIC_URL||(/\.github\.io$/.test(location.hostname)?location.origin+location.pathname:ART_URL);
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -388,9 +403,20 @@ function walk(v){return typeof v==='string'?v.split('intranet.nortelog.com.br').
 function setCfg(n,d){RAWN=n;EMP=esc(n);DOM=d;ITEMS=walk(BASE);$('#brand').textContent=n.toUpperCase()+' PC';$('#nm').textContent=n;$('#spName').textContent=n;$('#qrName').textContent=n;}
 const b64=t=>btoa(unescape(encodeURIComponent(t))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const unb64=t=>decodeURIComponent(escape(atob(t.replace(/-/g,'+').replace(/_/g,'/'))));
-const SCR=['setup','qrs','splash','intro','dash','cert'];
+const SCR=['setup','qrs','splash','intro','dash','cert','hist'];
 function show(id){SCR.forEach(i=>{$('#'+i).hidden=i!==id;});$('#desk').hidden=true;if(id!=='dash'&&DB_UNSUB){DB_UNSUB();DB_UNSUB=null;}}
 const rid=n=>{const a='abcdefghjkmnpqrstuvwxyz23456789';let r='';for(let i=0;i<n;i++)r+=a[Math.floor(Math.random()*a.length)];return r;};
+function histGet(){try{return JSON.parse(localStorage.getItem('cs_hist')||'[]');}catch(e){return[];}}
+function histSet(a){try{localStorage.setItem('cs_hist',JSON.stringify(a.slice(0,200)));}catch(e){}}
+function histAdd(sid,n){const a=histGet().filter(x=>x.sid!==sid);a.unshift({sid:sid,n:n,t:Date.now()});histSet(a);}
+function updHistBtn(){const n=histGet().length;$('#histBtn').textContent='Relatórios salvos ('+n+')';}
+const fmtDT=t=>new Date(t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+function openHist(){
+ show('hist');const a=histGet().sort((x,y)=>y.t-x.t);
+ $('#histList').innerHTML=a.length?a.map(x=>'<li><button class="hitem" data-sid="'+esc(x.sid)+'" data-n="'+esc(x.n)+'"><b>'+esc(x.n)+'</b><small>'+(x.t?fmtDT(x.t):'data não registrada')+' · <span data-cnt="'+esc(x.sid)+'">…</span></small></button><button class="hdel" data-del="'+esc(x.sid)+'" aria-label="Remover da lista">×</button></li>').join(''):'<li class="mini">Nenhum relatório ainda. Gere um QR Code para criar o primeiro.</li>';
+ dbp.then(db=>{a.slice(0,40).forEach(x=>{const el=()=>document.querySelector('[data-cnt="'+x.sid+'"]');if(!db){if(el())el().textContent='sem conexão';return;}
+  db.collection('cs_sessions').doc(x.sid).collection('players').get().then(q=>{if(el())el().textContent=q.size+(q.size===1?' jogador':' jogadores');}).catch(()=>{if(el())el().textContent='sem acesso';});});});
+}
 function readCfg(){const n=($('#inNome').value||'').replace(/\|/g,'').trim().slice(0,40);let d=cleanDom($('#inDom').value||'');if(n&&!d)d=(slug(n)||'empresa')+'.com.br';return{n:n,d:d};}
 function hint(){const c=readCfg();$('#domHint').textContent=c.n?'E-mails de exemplo no jogo: nome@'+c.d:'';}
 function fromHash(){try{const h=location.hash.replace(/^#/,'');if(!h)return null;
@@ -427,7 +453,7 @@ function genQR(){
  $('#qrLink').textContent='Link do jogo: '+QURL;$('#dashLink').textContent='Link do painel: '+DURL;
  $('#fbNote').hidden=!!FB.apiKey;$('#fbNote').textContent='Painel da turma desativado: falta configurar o Firebase no início do arquivo do jogo.';
  dbp.then(db=>{if(db)db.collection('cs_sessions').doc(SID).set({empresa:c.n,dominio:c.d,criadoEm:Date.now()}).catch(()=>{});});
- try{localStorage.setItem('cs_last',JSON.stringify({sid:SID,n:c.n}));}catch(e){}
+ histAdd(SID,c.n);updHistBtn();
  let svg='';try{const q=qrcode(0,'M');q.addData(QURL);q.make();svg=q.createSvgTag({cellSize:5,margin:2,scalable:true});}catch(e){}
  $('#qrBox').innerHTML=svg||'<p class="mini">Não foi possível desenhar o QR Code. Copie o link abaixo.</p>';
  show('qrs');
@@ -438,11 +464,11 @@ const lbl=id=>{const x=BASE[id-1];return x?(x.app==='popup'?x.name:x.subj):'Mens
 function demoPlayers(){let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;const names=['Ana','Bruno','Carla','Diego','Eduarda','Fábio','Gabi','Henrique','Isabela','João','Karina','Lucas','Marina','Nelson'];const hard={13:.6,15:.55,16:.5,17:.45,18:.7,19:.65,5:.4,9:.35,2:.3};
  return names.map(n=>{const ans={};let sc=0,h=0,st=0,best=0;BASE.forEach(x=>{const ok=r()>(hard[x.id]||.12)?1:0;ans[x.id]=ok;if(ok){h++;st++;best=Math.max(best,st);sc+=100+25*Math.min(st,8);}else st=0;});return{nome:n,score:sc,hits:h,answered:BASE.length,total:BASE.length,shield:100,best:best,done:true,answers:ans};});}
 function openDash(sid,name){
- show('dash');$('#dName').textContent=name||'Turma '+sid;$('#dMsg').textContent='Carregando...';LASTP=[];renderDash([]);
+ show('dash');$('#dWhen').textContent='';$('#dName').textContent=name||'Turma '+sid;$('#dMsg').textContent='Carregando...';LASTP=[];renderDash([]);
  if(sid==='demo'){$('#dName').textContent='Turma de exemplo';$('#dMsg').textContent='Dados de exemplo, só para ver como fica.';renderDash(demoPlayers());return;}
  dbp.then(db=>{
   if(!db){$('#dMsg').textContent=FB.apiKey?'Não foi possível conectar ao Firebase.':'O painel precisa do Firebase configurado no início do arquivo do jogo.';return;}
-  db.collection('cs_sessions').doc(sid).get().then(d=>{if(d.exists&&d.data().empresa)$('#dName').textContent=d.data().empresa;}).catch(()=>{});
+  db.collection('cs_sessions').doc(sid).get().then(d=>{if(d.exists){const v=d.data();if(v.empresa)$('#dName').textContent=v.empresa;if(v.criadoEm)$('#dWhen').textContent='Executado em '+fmtDT(v.criadoEm);}}).catch(()=>{});
   DB_UNSUB=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));$('#dMsg').textContent=a.length?'':'Aguardando os primeiros jogadores...';renderDash(a);},()=>{$('#dMsg').textContent='Sem permissão ou sem conexão com o painel.';});
  });
 }
@@ -497,8 +523,9 @@ $('#inNome').addEventListener('input',hint);
 $('#inDom').addEventListener('input',hint);
 $('#inPlayer').addEventListener('input',()=>{$('#nameErr').hidden=true;});
 $('#inPlayer').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
-addEventListener('hashchange',()=>{const c=fromHash();if(!c)return;if(c.dash)openDash(c.dash);else if($('#desk').hidden)splash(c);});
-try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){const b=$('#lastDash');b.hidden=false;b.textContent='Reabrir painel: '+l.n;b.dataset.sid=l.sid;b.dataset.n=l.n;}}catch(e){}
+addEventListener('hashchange',()=>{const c=fromHash();if(!c)return;if(c.dash){BACKTO='setup';openDash(c.dash);}else if($('#desk').hidden)splash(c);});
+try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){const h=histGet();if(!h.some(x=>x.sid===l.sid)){h.push({sid:l.sid,n:l.n,t:0});histSet(h);}localStorage.removeItem('cs_last');}}catch(e){}
+updHistBtn();
 {const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else show('setup');}
 let S;
 const ICON={mail:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aaaff"/><stop offset="1" stop-color="#1d4fd8"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gm)"/><rect x="11" y="16" width="34" height="25" rx="4" fill="#fff"/><path d="M12 19l16 12 16-12" fill="none" stroke="#1d63d8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>',teams:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a7cff"/><stop offset="1" stop-color="#4a3fd0"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gt)"/><rect x="10" y="12" width="36" height="26" rx="8" fill="#fff"/><path d="M18 38v8l9-8z" fill="#fff"/><circle cx="20" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="28" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="36" cy="25" r="2.8" fill="#5b4fe0"/></svg>'};
@@ -606,9 +633,12 @@ document.addEventListener('click',e=>{
  if(e.target.id==='gen')return genQR();
  if(e.target.id==='copyl')return copyText(e.target,QURL,'Copiar link do jogo');
  if(e.target.id==='copyd')return copyText(e.target,DURL,'Copiar link do painel');
- if(e.target.id==='btnDash')return openDash(SID,RAWN);
- if(e.target.id==='lastDash')return openDash(e.target.dataset.sid,e.target.dataset.n);
- if(e.target.id==='dBack'){return show(QURL?'qrs':'setup');}
+ if(e.target.id==='btnDash'){BACKTO='qrs';return openDash(SID,RAWN);}
+ if(e.target.id==='histBtn')return openHist();
+ if(e.target.id==='histBack')return show('setup');
+ {const hi=e.target.closest('.hitem');if(hi){BACKTO='hist';return openDash(hi.dataset.sid,hi.dataset.n);}
+  const hd=e.target.closest('.hdel');if(hd){histSet(histGet().filter(x=>x.sid!==hd.dataset.del));openHist();updHistBtn();return;}}
+ if(e.target.id==='dBack'){return BACKTO==='hist'?openHist():show(BACKTO);}
  if(e.target.id==='dCsv')return dashCsv();
  if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
  if(e.target.id==='certBack'){$('#cert').hidden=true;$('#desk').hidden=false;return;}
