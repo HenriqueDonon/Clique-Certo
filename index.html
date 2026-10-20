@@ -468,7 +468,7 @@ function sendProgress(done){
 
 /* ---- Telas de apresentador ---- */
 let spT=0;
-function splash(c){if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>show('intro'),2600);}
+function splash(c){if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>openAula(),2600);}
 function copyText(btn,txt,label){const ok=()=>{btn.textContent='Copiado';setTimeout(()=>{btn.textContent=label;},1800);};try{navigator.clipboard.writeText(txt).then(ok).catch(()=>{});}catch(e){}}
 function genQR(){
  const c=readCfg();
@@ -661,15 +661,15 @@ let AI=0,AS=[];
 function aulaShow(){
  const n=AS.length;$('#aSl').innerHTML=AS[AI];$('#aSl').style.animation='none';void $('#aSl').offsetWidth;$('#aSl').style.animation='';$('#aGl').hidden=true;
  $('#aDots').innerHTML=AS.map((_,i)=>'<i class="'+(i===AI?'on':i<AI?'dn':'')+'"></i>').join('');
- $('#aBack').style.visibility=AI?'visible':'hidden';$('#aNext').textContent=AI===n-1?'Começar o jogo':'Próximo';
+ $('#aBack').style.visibility=AI?'visible':'hidden';$('#aNext').textContent=AI===n-1?'Continuar':'Próximo';
  const sc=$('#aula');if(sc)sc.scrollTop=0;}
 function openAula(){AI=0;AS=slides();show('aula');aulaShow();}
-function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return begin();AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
+function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return show('intro');AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
 document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='ArrowRight')aulaGo(1);if(e.key==='ArrowLeft'&&AI)aulaGo(-1);});
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
  if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
- PNAME=nm;openAula();}
+ PNAME=nm;begin();}
 function begin(){
  PID=rid(10);
  init();sendProgress(false);ac();updHud();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
@@ -677,10 +677,10 @@ function begin(){
 document.addEventListener('click',e=>{
  if(e.target.id==='aNext')return aulaGo(1);
  if(e.target.id==='aBack')return aulaGo(-1);
- if(e.target.id==='aSkip')return begin();
+ if(e.target.id==='aSkip')return show('intro');
  if(e.target.classList.contains('gl')){const g=$('#aGl');g.textContent=e.target.textContent+': '+e.target.dataset.d;g.hidden=false;return;}
  if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
- if(e.target.closest('#splash')){clearTimeout(spT);show('intro');return;}
+ if(e.target.closest('#splash')){clearTimeout(spT);openAula();return;}
  if(e.target.id==='gen')return genQR();
  if(e.target.id==='copyl')return copyText(e.target,QURL,'Copiar link do jogo');
  if(e.target.id==='copyd')return copyText(e.target,DURL,'Copiar link do painel');
