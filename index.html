@@ -468,7 +468,7 @@ function sendProgress(done){
 
 /* ---- Telas de apresentador ---- */
 let spT=0;
-function splash(c){if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>openAula(),2600);}
+function splash(c){AFTER='intro';if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>openAula(),2600);}
 function copyText(btn,txt,label){const ok=()=>{btn.textContent='Copiado';setTimeout(()=>{btn.textContent=label;},1800);};try{navigator.clipboard.writeText(txt).then(ok).catch(()=>{});}catch(e){}}
 function genQR(){
  const c=readCfg();
@@ -551,7 +551,7 @@ $('#inPlayer').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
 addEventListener('hashchange',()=>{const c=fromHash();if(!c)return;if(c.dash){BACKTO='setup';openDash(c.dash);}else if($('#desk').hidden)splash(c);});
 try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){const h=histGet();if(!h.some(x=>x.sid===l.sid)){h.push({sid:l.sid,n:l.n,t:0});histSet(h);}localStorage.removeItem('cs_last');}}catch(e){}
 updHistBtn();
-{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else show('setup');}
+setTimeout(()=>{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else{AFTER='setup';openAula();}},0);
 let S;
 const ICON={mail:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aaaff"/><stop offset="1" stop-color="#1d4fd8"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gm)"/><rect x="11" y="16" width="34" height="25" rx="4" fill="#fff"/><path d="M12 19l16 12 16-12" fill="none" stroke="#1d63d8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>',teams:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a7cff"/><stop offset="1" stop-color="#4a3fd0"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gt)"/><rect x="10" y="12" width="36" height="26" rx="8" fill="#fff"/><path d="M18 38v8l9-8z" fill="#fff"/><circle cx="20" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="28" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="36" cy="25" r="2.8" fill="#5b4fe0"/></svg>'};
 const NAME={mail:'E-mail',teams:'Teams'};
@@ -663,8 +663,9 @@ function aulaShow(){
  $('#aDots').innerHTML=AS.map((_,i)=>'<i class="'+(i===AI?'on':i<AI?'dn':'')+'"></i>').join('');
  $('#aBack').style.visibility=AI?'visible':'hidden';$('#aNext').textContent=AI===n-1?'Continuar':'Próximo';
  const sc=$('#aula');if(sc)sc.scrollTop=0;}
+let AFTER='intro';
 function openAula(){AI=0;AS=slides();show('aula');aulaShow();}
-function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return show('intro');AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
+function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return show(AFTER);AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
 document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='ArrowRight')aulaGo(1);if(e.key==='ArrowLeft'&&AI)aulaGo(-1);});
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
@@ -677,7 +678,7 @@ function begin(){
 document.addEventListener('click',e=>{
  if(e.target.id==='aNext')return aulaGo(1);
  if(e.target.id==='aBack')return aulaGo(-1);
- if(e.target.id==='aSkip')return show('intro');
+ if(e.target.id==='aSkip')return show(AFTER);
  if(e.target.classList.contains('gl')){const g=$('#aGl');g.textContent=e.target.textContent+': '+e.target.dataset.d;g.hidden=false;return;}
  if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
  if(e.target.closest('#splash')){clearTimeout(spT);openAula();return;}
