@@ -176,6 +176,22 @@ mark{background:none;color:inherit}
  .card{--pad:22px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.aula .card{max-width:600px}
+.dots{display:flex;gap:6px;justify-content:center;margin:0 0 14px}.dots i{width:26px;height:6px;border-radius:3px;background:#d6e0ec}.dots i.on{background:var(--accent)}.dots i.dn{background:#8fb6f5}
+.sl{min-height:300px;animation:slin .3s ease}@keyframes slin{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.sl h2{font:800 1.5rem/1.2 'Sora',var(--f);margin:2px 0 10px;color:#0b2a52}.sl p{margin:8px 0}
+.gl{border:0;border-bottom:2px dotted var(--accent);background:none;color:var(--accent);font:inherit;font-weight:700;padding:0;cursor:pointer}
+.gbox{background:#eaf3ff;border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:.95rem;margin:10px 0}
+.big2{font-size:3rem;text-align:center;margin:10px 0;letter-spacing:.2em}
+.mail{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:.92rem;margin:12px 0;background:#fff}
+.mail div{padding:8px 12px}.mail .mh{background:var(--soft);font-family:var(--m);font-size:.82rem;overflow-wrap:anywhere}
+.mail .bt{display:inline-block;background:#1d63d8;color:#fff;border-radius:6px;padding:7px 12px;margin-top:6px;font-weight:700}
+.fk{background:var(--badbg);color:var(--bad);border-radius:4px;padding:0 4px;font-weight:700}.rl{background:var(--okbg);color:var(--ok);border-radius:4px;padding:0 4px;font-weight:700}
+.chips{display:grid;gap:10px;margin:12px 0}.chips div{display:flex;gap:12px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px}.chips b{display:block}.chips span.e{font-size:1.7rem;flex:none}
+.chips.x div{background:var(--badbg)}.chips.g{grid-template-columns:1fr 1fr}.chips.g div{flex-direction:column;text-align:center;align-items:center}
+.anv{display:flex;gap:10px;margin-top:16px;align-items:center}.anv .b{flex:1}
+.chips.g div{font-size:.88rem;padding:8px}
 </style>
 
 <div id="app">
@@ -231,6 +247,15 @@ mark{background:none;color:inherit}
  </div>
  <div class="screen splash" id="splash" hidden>
   <div><p class="eyebrow" style="color:#9fd4e6">Treinamento de segurança digital</p><div class="spn" id="spName"></div><p class="mini" style="color:#9fd4e6">Toque para continuar</p></div>
+ </div>
+ <div class="screen aula" id="aula" hidden>
+  <div class="card">
+   <div class="dots" id="aDots"></div>
+   <div class="sl" id="aSl"></div>
+   <div class="gbox" id="aGl" hidden></div>
+   <div class="anv"><button class="b neu" id="aBack" style="flex:.6">Voltar</button><button class="b" id="aNext">Próximo</button></div>
+   <p style="text-align:center;margin:10px 0 0"><button class="b ghost" id="aSkip">Pular aula</button></p>
+  </div>
  </div>
  <div class="screen" id="intro" hidden>
   <div class="card">
@@ -403,7 +428,7 @@ function walk(v){return typeof v==='string'?v.split('intranet.nortelog.com.br').
 function setCfg(n,d){RAWN=n;EMP=esc(n);DOM=d;ITEMS=walk(BASE);$('#brand').textContent=n.toUpperCase()+' PC';$('#nm').textContent=n;$('#spName').textContent=n;$('#qrName').textContent=n;}
 const b64=t=>btoa(unescape(encodeURIComponent(t))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const unb64=t=>decodeURIComponent(escape(atob(t.replace(/-/g,'+').replace(/_/g,'/'))));
-const SCR=['setup','qrs','splash','intro','dash','cert','hist'];
+const SCR=['setup','qrs','splash','intro','aula','dash','cert','hist'];
 function show(id){SCR.forEach(i=>{$('#'+i).hidden=i!==id;});$('#desk').hidden=true;if(id!=='dash'&&DB_UNSUB){DB_UNSUB();DB_UNSUB=null;}}
 const rid=n=>{const a='abcdefghjkmnpqrstuvwxyz23456789';let r='';for(let i=0;i<n;i++)r+=a[Math.floor(Math.random()*a.length)];return r;};
 function histGet(){try{return JSON.parse(localStorage.getItem('cs_hist')||'[]');}catch(e){return[];}}
@@ -621,13 +646,39 @@ function finish(){
   (miss.length?'<p><b>Para rever:</b></p><ul class="miss">'+miss.map(m=>'<li>'+m.subj+' ('+(m.phish?'era golpe':'era verdadeira')+')</li>').join('')+'</ul>':'<p>Você não errou nenhuma. Parabéns!</p>')+
   '<p><b>5 regras de ouro</b></p><ol class="rules">'+RULES.map(r=>'<li>'+r+'</li>').join('')+'</ol><button class="b" id="certBtn" style="width:100%;margin-bottom:8px">Gerar meu certificado</button><button class="b neu" id="again" style="width:100%">Jogar de novo</button></div>';
 }
+const G=(t,d)=>'<button class="gl" data-d="'+d+'">'+t+'</button>';
+function slides(){
+ const fk=DOM.replace(/[aeo]/,c=>({a:'4',e:'3',o:'0'}[c]));
+ return [
+ '<p class="eyebrow">Aula rápida · 3 minutos</p><h2>Por que isso importa</h2><div class="big2">🖱️➜🔓</div><p>Quase todo ataque começa com <b>um clique</b> de alguém. O golpista não precisa invadir o computador se convencer <b>você</b> a abrir a porta.</p><p>Nesta aula você aprende a reconhecer os golpes mais comuns na <b>'+EMP+'</b>. Depois, vai treinar no jogo.</p>',
+ '<h2>E-mail falso (phishing)</h2><p>O '+G('phishing','Mensagem falsa que finge ser de alguém confiável para roubar senhas, dados ou dinheiro.')+' imita empresas e colegas. Compare:</p><div class="mail"><div class="mh">De: Suporte TI &lt;suporte@<span class="fk">'+fk+'</span>&gt;<br>Assunto: Sua senha vai expirar HOJE!</div><div>Clique abaixo para manter sua senha.<br><span class="bt">Manter minha senha</span></div></div><p>O endereço verdadeiro termina em <span class="rl">@'+DOM+'</span>. O falso troca letras por números parecidos. Olhe sempre o '+G('domínio','A parte do endereço depois do @, como '+DOM+'. É o “sobrenome” de quem enviou.')+'.</p>',
+ '<h2>4 sinais de alerta</h2><div class="chips"><div><span class="e">👤</span><span><b>Remetente estranho</b>O endereço não é o da empresa ou tem letras trocadas.</span></div><div><span class="e">⏰</span><span><b>Pressa e medo</b>"Hoje!", "sua conta será bloqueada".</span></div><div><span class="e">🎁</span><span><b>Prêmio bom demais</b>Você não participou de nenhum sorteio.</span></div><div><span class="e">🔗</span><span><b>Link que não bate</b>Passe o mouse (no celular, segure o dedo) e leia o trecho antes da primeira barra.</span></div></div>',
+ '<h2>Golpes que não são e-mail</h2><p>O golpe também chega por outros caminhos:</p><div class="chips g"><div><span class="e">💬</span><span><b>Teams</b>Um "colega novo" pedindo favor ou dados.</span></div><div><span class="e">🪟</span><span><b>Pop-up</b>"Seu computador está infectado!"</span></div><div><span class="e">🔌</span><span><b>Pendrive</b>Achado na rua ou no estacionamento.</span></div><div><span class="e">🔑</span><span><b>Código '+G('MFA','Verificação em duas etapas: além da senha, um código ou aprovação no celular.')+'</b>Aprovação que você não pediu.</span></div><div><span class="e">📦</span><span><b>Programas piratas</b>Extensões e "programas grátis".</span></div></div>',
+ '<h2>O que NUNCA fazer</h2><div class="chips x"><div><span class="e">🚫</span><span><b>Passar código ou senha</b>Nem para a TI de verdade, por mensagem.</span></div><div><span class="e">🚫</span><span><b>Instalar programas por conta própria</b>Só a TI instala.</span></div><div><span class="e">🚫</span><span><b>Ligar pendrive achado</b>Entregue à TI.</span></div><div><span class="e">🚫</span><span><b>Pagar ou transferir só porque pediram</b>Mesmo que pareça ser o chefe.</span></div></div>',
+ '<h2>Na dúvida, faça 3 coisas</h2><div class="chips"><div><span class="e">1️⃣</span><span><b>Pare</b>Não clique, não responda e não abra anexos.</span></div><div><span class="e">2️⃣</span><span><b>Confirme por outro canal</b>Telefone ou pessoalmente, nunca respondendo a própria mensagem.</span></div><div><span class="e">3️⃣</span><span><b>Avise a TI</b>Reportar não é fazer feio. Ajuda a proteger todos.</span></div></div>',
+ '<h2>Como o jogo funciona</h2><div class="chips"><div><span class="e">📩</span><span><b>As mensagens chegam</b>Toque na notificação ou no ícone para abrir.</span></div><div><span class="e">🤔</span><span><b>Você decide</b><b>Parece seguro</b> ou <b>Reportar como golpe</b>. Atenção: nem tudo é golpe.</span></div><div><span class="e">⭐</span><span><b>Acertos dão pontos</b>Sequências valem mais. Erros baixam a segurança da empresa.</span></div></div><p>Pronto? Vamos ao expediente.</p>'];}
+let AI=0,AS=[];
+function aulaShow(){
+ const n=AS.length;$('#aSl').innerHTML=AS[AI];$('#aSl').style.animation='none';void $('#aSl').offsetWidth;$('#aSl').style.animation='';$('#aGl').hidden=true;
+ $('#aDots').innerHTML=AS.map((_,i)=>'<i class="'+(i===AI?'on':i<AI?'dn':'')+'"></i>').join('');
+ $('#aBack').style.visibility=AI?'visible':'hidden';$('#aNext').textContent=AI===n-1?'Começar o jogo':'Próximo';
+ const sc=$('#aula');if(sc)sc.scrollTop=0;}
+function openAula(){AI=0;AS=slides();show('aula');aulaShow();}
+function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return begin();AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
+document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='ArrowRight')aulaGo(1);if(e.key==='ArrowLeft'&&AI)aulaGo(-1);});
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
  if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
- PNAME=nm;PID=rid(10);
- init();sendProgress(false);ac();updHud();$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
+ PNAME=nm;openAula();}
+function begin(){
+ PID=rid(10);
+ init();sendProgress(false);ac();updHud();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
 
 document.addEventListener('click',e=>{
+ if(e.target.id==='aNext')return aulaGo(1);
+ if(e.target.id==='aBack')return aulaGo(-1);
+ if(e.target.id==='aSkip')return begin();
+ if(e.target.classList.contains('gl')){const g=$('#aGl');g.textContent=e.target.textContent+': '+e.target.dataset.d;g.hidden=false;return;}
  if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
  if(e.target.closest('#splash')){clearTimeout(spT);show('intro');return;}
  if(e.target.id==='gen')return genQR();
