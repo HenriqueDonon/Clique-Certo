@@ -247,13 +247,28 @@ mark{background:none;color:inherit}
 .b:disabled{opacity:.6;cursor:default;filter:saturate(.6)}
 .dash .b.ghost{color:#9fd4f5}
 .tbw{overflow-x:auto}#dTab{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}#dTab th{text-align:left;color:#9fd4f5;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #2b5d86}#dTab td{padding:8px;border-bottom:1px solid #ffffff14;white-space:nowrap}
+#dTab td{color:#e8f2fb}#dTab td:first-child{font-weight:700}
+#rep{position:fixed;inset:0;z-index:80;background:#dfe5ec;overflow:auto;color:#1b2733;font-family:"Atkinson Hyperlegible",system-ui,sans-serif}#rep[hidden]{display:none}
+#rep .rbar{position:sticky;top:0;z-index:2;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0b2a52}#rep .rbar .b{min-width:150px}#rep .rbar small{width:100%;text-align:center;color:#9fd4f5}
+#rep .rpage{width:min(840px,calc(100% - 24px));margin:16px auto 40px;background:#fff;padding:36px 42px;box-shadow:0 6px 28px #0b2a5226;border-radius:6px}
+#rep .rhd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:3px solid #0b2a52;padding-bottom:14px;margin-bottom:18px}
+#rep .rbrand{font-family:Sora,sans-serif;font-weight:800;color:#1d63d8;font-size:.95rem;letter-spacing:.02em}#rep h1{font-family:Sora,sans-serif;font-size:1.55rem;line-height:1.2;margin:4px 0 0;color:#0b2a52}
+#rep .rmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 20px;font-size:.85rem}#rep .rmeta div{background:#f3f6f9;border-radius:6px;padding:8px 10px}#rep .rmeta b{display:block;font-size:.95rem;color:#0b2a52;overflow-wrap:anywhere}#rep .rmeta span{color:#5b6b7a}
+#rep h2{font-family:Sora,sans-serif;font-size:1.05rem;color:#0b2a52;margin:0 0 8px;padding-top:4px}#rep .rsec{margin:0 0 24px}#rep p{margin:0 0 8px;line-height:1.55;font-size:.95rem}#rep .rnote{color:#5b6b7a;font-size:.82rem}
+#rep .rk{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0 12px}#rep .rk div{border:1px solid #dbe2ea;border-left:4px solid #1d63d8;border-radius:6px;padding:10px 12px}#rep .rk b{display:block;font-family:Sora,sans-serif;font-size:1.5rem;color:#0b2a52;line-height:1.1}#rep .rk span{font-size:.8rem;color:#5b6b7a}
+#rep .rleg{display:flex;gap:18px;flex-wrap:wrap;font-size:.85rem;color:#1b2733;margin:2px 0 6px}#rep .rleg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+#rep table{width:100%;border-collapse:collapse;font-size:.85rem}#rep th{text-align:left;background:#0b2a52;color:#fff;padding:7px 8px;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}#rep td{padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#1b2733}#rep tr:nth-child(even) td{background:#f6f8fb}#rep .tw{overflow-x:auto}
+#rep .pos{color:#15803d;font-weight:700}#rep .neg{color:#b91c1c;font-weight:700}#rep ul{margin:0;padding-left:20px}#rep li{margin:0 0 6px;line-height:1.5;font-size:.95rem}
+#rep .rft{border-top:1px solid #dbe2ea;padding-top:10px;margin-top:10px;font-size:.78rem;color:#5b6b7a;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:640px){#rep .rpage{padding:22px 16px}#rep .rmeta,#rep .rk{grid-template-columns:repeat(2,1fr)}#rep .rhd{display:block}}
+@media print{@page{size:A4;margin:12mm}html,body{background:#fff!important;height:auto!important;overflow:visible!important}body>*:not(#rep){display:none!important}#rep{position:static;overflow:visible;background:#fff}#rep .rbar{display:none}#rep .rpage{width:auto;margin:0;padding:0;box-shadow:none;border-radius:0}#rep *{-webkit-print-color-adjust:exact;print-color-adjust:exact}#rep .rsec,#rep .rk,#rep svg,#rep tr{break-inside:avoid}#rep h2{break-after:avoid}#rep .rmeta,#rep .rk{grid-template-columns:repeat(4,1fr)}}
 #dTab .up{color:#5bd48b}#dTab .dn{color:#ff8a80}.tg2{background:#f2b705;color:#2b2100;border-radius:10px;padding:1px 8px;font-size:.8rem;font-weight:700}
 </style>
 
 <div id="app">
  <div class="screen dash" id="dash" hidden>
   <div class="dwrap">
-   <div class="dhead"><div><div class="eyebrow" style="color:#9fd4f5">Painel da turma</div><h2 id="dName"></h2></div><div class="dbtns"><button class="b neu" id="dCsv">Baixar planilha</button><button class="b neu" id="dBack">Voltar</button></div></div>
+   <div class="dhead"><div><div class="eyebrow" style="color:#9fd4f5">Painel da turma</div><h2 id="dName"></h2></div><div class="dbtns"><button class="b" id="dPdf">Relatório PDF</button><button class="b neu" id="dCsv">Baixar planilha</button><button class="b neu" id="dBack">Voltar</button></div></div>
    <div class="dmsg" id="dWhen"></div>
    <div class="dmsg" id="dMsg"></div>
    <section class="dcard" id="dCtl"><h3>Controle da aula</h3>
@@ -728,6 +743,79 @@ function renderDash(a){
  const f1l=a.filter(p=>fz(p)==='1');
  $('#dF1').innerHTML=f1l.length?f1l.map(p=>'<li class="hd"><span>'+esc(p.nome||'?')+'</span>'+(SESS.aulaEm?'<small>terminará como tardio</small>':'')+'</li>').join(''):'<li class="dmsg">Ninguém na fase 1 agora.</li>';
 }
+/* ---- Relatório profissional (PDF via impressão) ---- */
+const RC={a:'#d97706',b:'#2563eb',ink:'#1b2733',mu:'#5b6b7a',gr:'#e3e8ee',n:'#475569'};
+const repLeg=()=>'<div class="rleg"><span><i style="background:'+RC.a+'"></i>Fase 1 · antes da apresentação</span><span><i style="background:'+RC.b+'"></i>Fase 2 · depois da apresentação</span></div>';
+function chHbar(rows){
+ const W=720,L=200,R=48,PW=W-L-R,bh=13,g=2,rh=bh*2+g+16,T=6,H=T+rows.length*rh+22;
+ let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Taxa de acertos por tipo de mensagem nas fases 1 e 2" style="font-family:inherit">';
+ [0,25,50,75,100].forEach(v=>{const x=L+PW*v/100;s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(H-20)+'" stroke="'+RC.gr+'" stroke-width="1"/><text x="'+x+'" y="'+(H-5)+'" font-size="11" fill="'+RC.mu+'" text-anchor="middle">'+v+'%</text>';});
+ rows.forEach((r,i)=>{const y=T+i*rh+5;
+  s+='<text x="'+(L-12)+'" y="'+(y+bh+3)+'" font-size="13" fill="'+RC.ink+'" text-anchor="end" font-weight="'+(r.bold?'700':'400')+'">'+esc(r.l)+'</text>';
+  [[r.a,RC.a,'Fase 1',r.na],[r.b,RC.b,'Fase 2',r.nb]].forEach((v,j)=>{const yy=y+j*(bh+g);if(v[0]==null){s+='<text x="'+(L+4)+'" y="'+(yy+bh-2)+'" font-size="11" fill="'+RC.mu+'">sem respostas</text>';return;}const w=Math.max(3,PW*v[0]/100);
+   s+='<rect x="'+L+'" y="'+yy+'" width="'+w.toFixed(1)+'" height="'+bh+'" rx="3" fill="'+v[1]+'"><title>'+esc(r.l)+' · '+v[2]+': '+v[0]+'% de acertos'+(v[3]?' ('+v[3]+' respostas)':'')+'</title></rect><text x="'+(L+w+6).toFixed(1)+'" y="'+(yy+bh-2)+'" font-size="11.5" font-weight="700" fill="'+RC.ink+'">'+v[0]+'%</text>';});});
+ return s+'</svg>';
+}
+function chVbar(gs){
+ const W=720,H=260,L=44,B=44,T=18,PW=W-L-12,PH=H-T-B,mx=Math.max(1,...gs.map(x=>Math.max(x.a,x.b))),st=Math.max(1,Math.ceil(mx/4)),top=st*Math.ceil(mx/st);
+ let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Distribuição dos participantes por faixa de acertos nas fases 1 e 2" style="font-family:inherit">';
+ for(let v=0;v<=top;v+=st){const y=T+PH-PH*v/top;s+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-12)+'" y2="'+y+'" stroke="'+RC.gr+'"/><text x="'+(L-8)+'" y="'+(y+4)+'" font-size="11" fill="'+RC.mu+'" text-anchor="end">'+v+'</text>';}
+ s+='<text x="12" y="'+(T+PH/2)+'" font-size="11" fill="'+RC.mu+'" transform="rotate(-90 12 '+(T+PH/2)+')" text-anchor="middle">pessoas</text>';
+ const gw=PW/gs.length,bw=Math.min(52,gw*.3);
+ gs.forEach((x,i)=>{const cx=L+gw*i+gw/2;
+  [[x.a,RC.a,'Fase 1'],[x.b,RC.b,'Fase 2']].forEach((v,j)=>{const h=PH*v[0]/top,bx=j?cx+1:cx-bw-1,y=T+PH-h;
+   s+='<rect x="'+bx.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(h,0).toFixed(1)+'" rx="3" fill="'+v[1]+'"><title>'+x.l+' · '+v[2]+': '+v[0]+(v[0]===1?' pessoa':' pessoas')+'</title></rect><text x="'+(bx+bw/2).toFixed(1)+'" y="'+(y-5).toFixed(1)+'" font-size="11.5" font-weight="700" fill="'+RC.ink+'" text-anchor="middle">'+v[0]+'</text>';});
+  s+='<text x="'+cx.toFixed(1)+'" y="'+(T+PH+20)+'" font-size="12.5" fill="'+RC.ink+'" text-anchor="middle">'+x.l+'</text>';});
+ s+='<line x1="'+L+'" y1="'+(T+PH)+'" x2="'+(W-12)+'" y2="'+(T+PH)+'" stroke="#9aa7b4"/>';
+ return s+'</svg>';
+}
+function chErr(rows){
+ const W=720,rh=42,H=rows.length*rh+4,PW=W-60;
+ let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Mensagens com maior taxa de erro" style="font-family:inherit">';
+ rows.forEach((r,i)=>{const y=i*rh+2,w=Math.max(3,PW*r.v/100),l=r.l.length>78?r.l.slice(0,76)+'…':r.l;
+  s+='<text x="0" y="'+(y+13)+'" font-size="12.5" fill="'+RC.ink+'">'+esc(l)+' <tspan fill="'+RC.mu+'" font-size="11">('+esc(r.tag)+')</tspan></text><rect x="0" y="'+(y+20)+'" width="'+PW+'" height="12" rx="3" fill="#eef1f5"/><rect x="0" y="'+(y+20)+'" width="'+w.toFixed(1)+'" height="12" rx="3" fill="'+RC.n+'"><title>'+esc(r.l)+': '+r.v+'% erraram ('+r.n+' respostas)</title></rect><text x="'+(PW+8)+'" y="'+(y+31)+'" font-size="12" font-weight="700" fill="'+RC.ink+'">'+r.v+'%</text>';});
+ return s+'</svg>';
+}
+const RECS={'email-golpe':'Reforçar a conferência do remetente e do endereço real dos links antes de clicar, e repetir simulações de phishing por e-mail periodicamente.','email-ok':'Mostrar exemplos de e-mails legítimos da empresa, para reduzir falsos alarmes e manter a confiança nos canais oficiais.','teams-golpe':'Orientar que pedidos urgentes no Teams (senhas, códigos, pagamentos, dados) sejam sempre confirmados por outro canal, e revisar o acesso de contas externas.','teams-ok':'Divulgar quais contas, equipes e canais do Teams são oficiais, para que as pessoas reconheçam as mensagens legítimas.','popup':'Treinar o reconhecimento de pop-ups e alertas falsos (falso suporte técnico, prêmios, vírus) e como fechar a janela com segurança.'};
+function repData(){
+ const a=LASTP,el=a.filter(p=>fz(p)==='d'&&p.f1h!=null&&p.f2h!=null&&!tardio(p)),late=a.filter(p=>fz(p)==='d'&&tardio(p)).length;
+ const sm=f=>el.reduce((t,p)=>t+(f(p)||0),0),p1=pct(sm(p=>p.f1h),sm(p=>p.f1t)),p2=pct(sm(p=>p.f2h),sm(p=>p.f2t));
+ const ev=el.map(p=>pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t)),up=ev.filter(v=>v>0).length,eq=ev.filter(v=>v===0).length;
+ const C={};el.forEach(p=>Object.keys(p.answers||{}).forEach(k=>{const x=BASE[k-1];if(!x)return;const ph=x.set===String(p.ordem||'AB')[0]?1:2,c=C[x.cat]=C[x.cat]||{h1:0,n1:0,h2:0,n2:0};c['n'+ph]++;if(p.answers[k])c['h'+ph]++;}));
+ const cats=Object.keys(CATL).filter(k=>C[k]).map(k=>({k:k,l:CATL[k],a:C[k].n1?pct(C[k].h1,C[k].n1):null,b:C[k].n2?pct(C[k].h2,C[k].n2):null,na:C[k].n1,nb:C[k].n2}));
+ const BD=[['Abaixo de 50%',0,49],['50% a 69%',50,69],['70% a 89%',70,89],['90% a 100%',90,100]],inb=(v,b)=>v>=b[1]&&v<=b[2];
+ const bands=BD.map(b=>({l:b[0],a:el.filter(p=>inb(pct(p.f1h,p.f1t),b)).length,b:el.filter(p=>inb(pct(p.f2h,p.f2t),b)).length}));
+ const t={};a.forEach(p=>Object.keys(p.answers||{}).forEach(k=>{t[k]=t[k]||{n:0,e:0};t[k].n++;if(!p.answers[k])t[k].e++;}));
+ const hard=Object.keys(t).filter(k=>t[k].e>0&&BASE[k-1]).sort((x,y)=>t[y].e/t[y].n-t[x].e/t[x].n||t[y].n-t[x].n).slice(0,5).map(k=>({l:lbl(+k),v:Math.round(t[k].e/t[k].n*100),n:t[k].n,tag:(BASE[k-1].phish?'golpe':'mensagem verdadeira')+' · '+CATL[BASE[k-1].cat]}));
+ return{a:a,el:el,late:late,p1:p1,p2:p2,dl:p2-p1,up:up,eq:eq,dn:ev.length-up-eq,cats:cats,bands:bands,hard:hard,done:a.filter(p=>fz(p)==='d').length};
+}
+function openRep(){
+ const D=repData(),emp=SESS.empresa||$('#dName').textContent||'Turma',when=SESS.criadoEm?fmtDT(SESS.criadoEm):'–',now=fmtDT(Date.now()),n=D.a.length,E=D.el.length;
+ const sg=v=>(v>0?'+':'')+v;
+ const weak=D.cats.filter(c=>c.b!=null||c.a!=null).map(c=>({c:c,v:c.b!=null?c.b:c.a})).sort((x,y)=>x.v-y.v);
+ let ex;
+ if(E){ex='<p>'+n+(n===1?' pessoa participou':' pessoas participaram')+' do treinamento e '+E+' concluíram as duas fases dentro do horário previsto. A taxa média de acertos passou de <b>'+D.p1+'%</b>, antes da apresentação, para <b>'+D.p2+'%</b>, depois dela: '+(D.dl>0?'uma evolução de <b>'+sg(D.dl)+' pontos percentuais</b>.':D.dl<0?'uma variação de <b>'+D.dl+' pontos percentuais</b>.':'sem variação.')+'</p><p>'+D.up+' de '+E+' participantes ('+pct(D.up,E)+'%) melhoraram o desempenho'+(D.eq?', '+D.eq+' mantiveram o mesmo resultado':'')+(D.dn?' e '+D.dn+' tiveram resultado menor':'')+'.'+(weak.length?' O tipo de mensagem com menor acerto foi <b>'+weak[0].c.l.toLowerCase()+'</b> ('+weak[0].v+'%).':'')+'</p>';}
+ else ex='<p>'+n+(n===1?' pessoa participou':' pessoas participaram')+' até agora. O comparativo antes x depois aparece quando os participantes concluírem as duas fases.</p>';
+ const recs=weak.filter(w=>w.v<85).slice(0,3);if(!recs.length&&weak.length)recs.push(weak[0]);
+ const st=p=>{const z=fz(p);return z==='d'?(tardio(p)?'Concluiu · fora do comparativo':'Concluiu'):z==='w'?'Aguardando fase 2':z==='2'?'Na fase 2':'Na fase 1';};
+ const rows=D.a.filter(p=>fz(p)!=='o').sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR'));
+ const tb='<table><thead><tr><th>Participante</th><th>Fase 1</th><th>Fase 2</th><th>Evolução</th><th>Situação</th></tr></thead><tbody>'+rows.map(p=>{const z=fz(p),f1=z!=='1',f2=z==='d',e=f2&&!tardio(p)?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):null;return '<tr><td>'+esc(p.nome||'?')+'</td><td>'+(f1?p.f1h+'/'+p.f1t+' ('+pct(p.f1h,p.f1t)+'%)':'–')+'</td><td>'+(f2?p.f2h+'/'+p.f2t+' ('+pct(p.f2h,p.f2t)+'%)':'–')+'</td><td>'+(e==null?'–':'<span class="'+(e>0?'pos':e<0?'neg':'')+'">'+sg(e)+' p.p.</span>')+'</td><td>'+st(p)+'</td></tr>';}).join('')+'</tbody></table>';
+ let h='<div class="rhd"><div><div class="rbrand">Clique Seguro</div><h1>Relatório do treinamento de conscientização em segurança digital</h1></div><div class="rnote" style="text-align:right">Gerado em<br>'+now+'</div></div>'
+ +'<div class="rmeta"><div><span>Empresa</span><b>'+esc(emp)+'</b></div><div><span>Data da turma</span><b>'+when+'</b></div><div><span>Participantes</span><b>'+n+'</b></div><div><span>Concluíram</span><b>'+D.done+'</b></div></div>'
+ +'<section class="rsec"><h2>1. Resumo executivo</h2>'+(E?'<div class="rk"><div><b>'+D.p1+'%</b><span>acertos antes da apresentação</span></div><div><b>'+D.p2+'%</b><span>acertos depois da apresentação</span></div><div style="border-left-color:'+(D.dl>=0?'#15803d':'#b91c1c')+'"><b>'+sg(D.dl)+' p.p.</b><span>evolução da turma</span></div><div><b>'+pct(D.up,E)+'%</b><span>das pessoas melhoraram</span></div></div>':'')+ex+'</section>';
+ if(E){h+='<section class="rsec"><h2>2. Acertos por tipo de mensagem</h2><p class="rnote">Percentual de respostas corretas em cada tipo de mensagem simulada, antes e depois da apresentação.</p>'+repLeg()+chHbar([{l:'Geral',a:D.p1,b:D.p2,bold:1}].concat(D.cats))+'</section>'
+  +'<section class="rsec"><h2>3. Distribuição dos participantes</h2><p class="rnote">Quantas pessoas ficaram em cada faixa de acertos. Quanto mais barras azuis à direita, melhor o resultado da turma.</p>'+repLeg()+chVbar(D.bands)+'</section>';}
+ if(D.hard.length)h+='<section class="rsec"><h2>'+(E?4:2)+'. Mensagens com mais erros</h2><p class="rnote">As cinco mensagens que mais confundiram a turma, considerando todas as respostas.</p>'+chErr(D.hard)+'</section>';
+ const k=E?5:(D.hard.length?3:2);
+ h+='<section class="rsec"><h2>'+k+'. Recomendações</h2><ul>'+recs.map(w=>'<li><b>'+w.c.l+' ('+w.v+'% de acertos):</b> '+RECS[w.c.k]+'</li>').join('')+'<li>Repetir o treinamento em cerca de 3 meses, com mensagens novas, para medir se o aprendizado se mantém.</li>'+(n&&SESS.esperadas&&SESS.esperadas>n?'<li>'+(SESS.esperadas-n)+' das '+SESS.esperadas+' pessoas esperadas não participaram. Recomenda-se uma nova turma para elas.</li>':'')+'</ul></section>'
+ +'<section class="rsec"><h2>'+(k+1)+'. Resultado por participante</h2><div class="tw">'+(rows.length?tb:'<p>Sem participantes.</p>')+'</div></section>'
+ +'<section class="rsec"><h2>'+(k+2)+'. Metodologia</h2><p class="rnote">Cada participante avaliou 22 mensagens simuladas (e-mail, Microsoft Teams e pop-ups), divididas em duas fases de 11, com mensagens diferentes em cada fase. A fase 1 foi feita antes da apresentação e a fase 2 depois. A ordem dos dois conjuntos de mensagens foi alternada entre os participantes, para que a diferença de dificuldade entre eles não distorça a comparação. Depois de cada resposta, o jogo explica os sinais do golpe; por isso, a evolução reflete o treinamento como um todo.'+(D.late?' '+D.late+(D.late===1?' pessoa terminou':' pessoas terminaram')+' a fase 1 depois do início da apresentação e '+(D.late===1?'ficou':'ficaram')+' fora do comparativo.':'')+' p.p. = pontos percentuais.</p></section>'
+ +'<div class="rft"><span>Clique Seguro · Treinamento de conscientização em segurança digital</span><span>'+esc(emp)+' · '+when+'</span></div>';
+ let r=document.getElementById('rep');if(!r){r=document.createElement('div');r.id='rep';document.body.appendChild(r);}
+ r.innerHTML='<div class="rbar"><button class="b" id="rPdf">Baixar PDF</button><button class="b neu" id="rClose">Fechar</button><small>Na janela que abrir, escolha <b>Salvar como PDF</b> em "Destino".</small></div><div class="rpage">'+h+'</div>';
+ r.hidden=false;r.scrollTop=0;r.dataset.t='Relatorio Clique Seguro - '+emp+' - '+when.replace(/[\/:]/g,'-');
+}
+function repPdf(){const r=$('#rep'),t=document.title;document.title=r.dataset.t||t;window.print();setTimeout(()=>{document.title=t;},800);}
 function dashCsv(){
  const rows=[['Nome','Ordem dos conjuntos','Fase 1 acertos','Fase 1 total','Fase 1 %','Fase 2 acertos','Fase 2 total','Fase 2 %','Evolução (p.p.)','Tardio','Pontos','Melhor sequência','Concluiu']].concat(LASTP.slice().sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR')).map(p=>{const z=fz(p),f1=z!=='1'&&z!=='o',f2=z==='d';return[p.nome,p.ordem||'',f1?p.f1h:'',f1?p.f1t:'',f1?pct(p.f1h,p.f1t):'',f2?p.f2h:'',f2?p.f2t:'',f2?pct(p.f2h,p.f2t):'',f2&&f1?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):'',tardio(p)?'sim':'não',p.score,p.best,z==='d'?'sim':'não'];}));
  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
@@ -1017,6 +1105,9 @@ document.addEventListener('click',e=>{
   const hd=e.target.closest('.hdel');if(hd){histSet(histGet().filter(x=>x.sid!==hd.dataset.del));openHist();updHistBtn();return;}}
  if(e.target.id==='dBack'){return BACKTO==='hist'?openHist():show(BACKTO);}
  if(e.target.id==='dCsv')return dashCsv();
+ if(e.target.id==='dPdf')return openRep();
+ if(e.target.id==='rPdf')return repPdf();
+ if(e.target.id==='rClose'){$('#rep').hidden=true;return;}
  if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
  if(e.target.id==='certBack'){$('#cert').hidden=true;$('#desk').hidden=false;return;}
  if(e.target.id==='backCfg')return show('setup');
