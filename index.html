@@ -574,7 +574,7 @@ function errMsg(x){const c=(x&&x.code||'').replace('auth/','');
  const m={'email-already-in-use':'Este e-mail já tem cadastro. Use Entrar.','weak-password':'Senha fraca: use ao menos 8 caracteres.','invalid-email':'E-mail inválido.','too-many-requests':'Muitas tentativas. Aguarde alguns minutos.','invalid-verification-code':'Código incorreto ou expirado. Confira a hora do celular.','network-request-failed':'Sem conexão com a internet.','operation-not-allowed':'Recurso não ativado no Firebase (veja o passo a passo).','requires-recent-login':'Entre novamente e repita.','unsupported-first-factor':'MFA por aplicativo não está ativado no projeto.','missing-password':'Digite a senha.'};
  return m[c]||('Não foi possível concluir ('+(c||'erro')+').');}
 function lgRender(step,msg,good){
- const T={load:['Verificando acesso','Aguarde um instante...'],in:['Entrar','Use o e-mail e a senha do instrutor.'],up:['Criar conta','Depois de criar, você confirma o e-mail e cadastra o autenticador. O acesso só é liberado se seu e-mail estiver autorizado.'],mfa:['Código do autenticador','Digite os 6 números que aparecem no aplicativo autenticador do seu celular.'],ver:['Confirme seu e-mail','Enviamos um link de confirmação para o seu e-mail. Abra, clique no link e volte aqui.'],enr:['Cadastrar autenticador','1) Abra um aplicativo autenticador (Google Authenticator, Microsoft Authenticator...). 2) Leia o QR Code ou digite a chave. 3) Digite o código de 6 números.'],deny:['Sem autorização','Esta conta não está na lista de instrutores. Peça a um administrador para autorizar seu e-mail.'],off:['Sem conexão','Não foi possível conectar ao Firebase. Verifique a internet e recarregue a página.']}[step];
+ const T={load:['Verificando acesso','Aguarde um instante...'],in:['Entrar','Use o e-mail e a senha do instrutor.'],up:['Criar conta','Depois de criar, você confirma o e-mail. O acesso só é liberado se seu e-mail estiver autorizado.'],mfa:['Código do autenticador','Digite os 6 números que aparecem no aplicativo autenticador do seu celular.'],ver:['Confirme seu e-mail','Enviamos um link de confirmação para o seu e-mail. Abra, clique no link e volte aqui.'],enr:['Cadastrar autenticador','1) Abra um aplicativo autenticador (Google Authenticator, Microsoft Authenticator...). 2) Leia o QR Code ou digite a chave. 3) Digite o código de 6 números.'],deny:['Sem autorização','Esta conta não está na lista de instrutores. Peça a um administrador para autorizar seu e-mail.'],off:['Sem conexão','Não foi possível conectar ao Firebase. Verifique a internet e recarregue a página.']}[step];
  const em=AUTH&&AUTH.currentUser?esc(AUTH.currentUser.email||''):'';
  $('#lgT').textContent=T[0];$('#lgP').textContent=T[1];
  const inp=(id,lab,ty,ac,ex)=>'<label for="'+id+'">'+lab+'</label><input id="'+id+'" type="'+ty+'" autocomplete="'+ac+'" '+(ex||'')+'>';
@@ -596,12 +596,6 @@ async function resolveAccess(){
  const u=AUTH.currentUser;ADMIN=false;
  if(!u){lgRender('in');return;}
  if(!u.emailVerified){lgRender('ver');return;}
- if(!AUTHM.multiFactor(u).enrolledFactors.length){
-  try{const se=await AUTHM.multiFactor(u).getSession();ENR=await AUTHM.TotpMultiFactorGenerator.generateSecret(se);lgRender('enr');}
-  catch(x){try{await AUTHM.signOut(AUTH);}catch(y){}lgRender('in',errMsg(x));}
-  return;}
- let ok=false;try{const t=await u.getIdTokenResult();ok=!!(t.claims&&t.claims.firebase&&t.claims.firebase.sign_in_second_factor);}catch(e){}
- if(!ok){try{await AUTHM.signOut(AUTH);}catch(y){}lgRender('in','Entre de novo para confirmar o código do autenticador.');return;}
  try{const db=await dbp;const d=await db.collection('cs_admins').doc((u.email||'').toLowerCase()).get();if(!d.exists){lgRender('deny');return;}}catch(e){lgRender('deny');return;}
  ADMIN=true;const f=AFTERLOGIN;AFTERLOGIN=null;if(f)f();
 }
