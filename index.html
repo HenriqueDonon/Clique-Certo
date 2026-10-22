@@ -900,9 +900,9 @@ function dec(id,c,ev){
 }
 function setPhl(){$('#phl').textContent='Fase '+(PH===2?2:1)+'/2';}
 const PK=()=>'cs_p_'+SID;
-function saveP(){if(!SID)return;try{const r={};Object.keys(S.res).forEach(k=>r[k]=S.res[k].ok?1:0);localStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,ord:ORD,f1:F1,score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
-function loadP(){try{return JSON.parse(localStorage.getItem(PK())||'null');}catch(e){return null;}}
-function clearP(){try{localStorage.removeItem(PK());}catch(e){}}
+function saveP(){if(!SID)return;try{const r={};Object.keys(S.res).forEach(k=>r[k]=S.res[k].ok?1:0);sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,ord:ORD,f1:F1,score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
+function loadP(){try{return JSON.parse(sessionStorage.getItem(PK())||'null');}catch(e){return null;}}
+function clearP(){try{sessionStorage.removeItem(PK());}catch(e){}}
 function afterSplash(){const p=SID&&loadP();if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');}
 function restoreWait(p){PID=p.pid;PNAME=p.name;ORD=p.ord;PH='w';F1=p.f1;init();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield;S.time=p.time||540;Object.keys(p.res||{}).forEach(k=>{S.res[k]={ok:!!p.res[k],choice:'',pts:0,st:0};});openWait();}
 function setRel(v){
