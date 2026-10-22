@@ -35,8 +35,8 @@ mark{background:none;color:inherit}
 #icons{position:absolute;left:16px;top:16px;display:grid;gap:14px}
 .ico{position:relative;width:96px;background:none;border:0;color:#fff;text-align:center;padding:8px 4px;border-radius:10px}
 .ico:hover{background:#ffffff22}
-.ico svg{width:56px;height:56px;display:block;margin:0 auto 6px;filter:drop-shadow(0 6px 10px #0007);transition:transform .15s}
-.ico:hover svg{transform:translateY(-3px)}
+.ico>svg{width:56px;height:56px;display:block;margin:0 auto 6px;filter:drop-shadow(0 6px 10px #0007);transition:transform .15s}
+.ico:hover>svg{transform:translateY(-3px)}
 .ico span.t{display:inline-block;font-weight:700;background:#06172a99;padding:1px 9px;border-radius:8px}
 .badge{position:absolute;top:2px;right:10px;min-width:26px;height:26px;border-radius:13px;background:var(--bad);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.9rem;padding:0 6px}
 .badge.pulse{animation:pl 1.2s infinite}
@@ -193,7 +193,45 @@ mark{background:none;color:inherit}
 .chips.x div{background:#fdf1ef}.chips.g{grid-template-columns:1fr 1fr}.chips.g div{flex-direction:column;text-align:center;align-items:center}
 .anv{display:flex;gap:10px;margin-top:16px;align-items:center}.anv .b{flex:1}
 .chips.g div{font-size:.88rem;padding:8px}
-</style>
+
+/* ===== app themes ===== */
+.win{border-radius:12px;box-shadow:0 24px 60px #000a,0 0 0 1px #ffffff1f}
+.win.app-mail{--ac:#0f6cbd;--tint:#e8f1fb}
+.win.app-teams{--ac:#5b5fc7;--tint:#eeeffb}
+.tbar{background:var(--ac,#0f6cbd);padding:8px 8px 8px 14px;font-weight:600}
+.tbar .tt{display:flex;align-items:center;gap:10px}.tbar small{font-weight:400;opacity:.8}
+.tbar .ic{width:28px;height:28px;border-radius:8px;background:#ffffff2b;color:#fff}.tbar .ic svg{width:17px;height:17px}
+.app-mail .list{background:#fff}.app-teams .list{background:#f4f4fb}
+.row{position:relative;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #e9eef5;padding:12px 14px}
+.row.sel{background:var(--tint);box-shadow:inset 3px 0 0 var(--ac)}
+.row .rt{min-width:0;flex:1}.row b{display:flex;justify-content:space-between;gap:8px;font-weight:700}.row b em{font:.75rem var(--m);color:var(--mute);font-style:normal;font-weight:400}
+.row.new b::before{display:none}.row.new::after{content:"";position:absolute;right:12px;bottom:14px;width:9px;height:9px;border-radius:50%;background:var(--ac)}
+.row.new b{font-weight:800}
+.av{background:#5b5fc7;color:#fff;font-size:.9rem}.av.sm{width:32px;height:32px;font-size:.78rem}.av.lg{width:48px;height:48px;font-size:1rem}.row .av{width:38px;height:38px;font-size:.82rem;flex:none}
+.detail{background:#fff}.app-teams .detail{background:#f7f7fc}
+.app-mail .detail h2{font:800 1.3rem/1.25 'Sora',var(--f);color:#0b2a52}
+.app-mail .from{padding-bottom:14px;border-bottom:1px solid var(--line)}
+.to{font-size:.85rem;color:var(--mute)}
+.att{background:var(--tint,#eef3f9);border:1px solid #cfe0f5;gap:8px}.att .ic{width:24px;height:24px;border-radius:6px;background:none;color:var(--ac)}.att .ic svg{width:16px;height:16px}
+.chead{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #e2e3f3;margin-bottom:14px}.chead>div{flex:1;min-width:0}
+.pill{font-size:.75rem;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}.pill.on{background:#e2f4e9;color:#1f7a4d}.pill.ext{background:#fff1d6;color:#8a5a00;border:1px solid #f0d28a}
+.chat .day{text-align:center;font-size:.75rem;color:var(--mute);margin:4px 0 12px}
+.msg{display:flex;gap:10px;align-items:flex-start}.mb{min-width:0}.meta{font-size:.8rem;color:var(--mute);margin-bottom:4px}.meta b{color:var(--ink)}
+.bubble{background:#fff;border:1px solid #e0e1f3;border-radius:4px 14px 14px 14px;box-shadow:0 1px 2px #5b5fc714}
+.res{border:0;border-left:5px solid;border-radius:10px}.res.okk{border-color:var(--ok);background:#eaf6ef}.res.no{border-color:var(--bad);background:#fdf0ee}
+.rh{display:flex;align-items:center;gap:10px;margin-bottom:6px}.rh h3{margin:0}.rh .ic{width:32px;height:32px;border-radius:9px;background:#fff}.res.okk .ic{color:var(--ok)}.res.no .ic{color:var(--bad)}
+.rh .ic svg{width:19px;height:19px}
+.ico>svg{filter:drop-shadow(0 6px 12px #0006)}.chead .addr{font-family:var(--f);font-size:.9rem}
+#toast{display:flex;gap:12px;align-items:center;border-left:0;border-radius:12px;padding:10px 14px 10px 10px}
+#toast .ic{width:40px;height:40px;border-radius:10px;color:#fff}#toast.mail .ic{background:#0f6cbd}#toast.teams .ic{background:#5b5fc7}
+#toast small{color:var(--mute)}
+#tasks button{border-bottom-color:#35c8ff}
+.popw{border:1px solid #c9d4e3;border-radius:12px}
+.popw header{display:flex;justify-content:space-between;align-items:center;background:#eef1f6;color:var(--ink);padding:8px 10px 8px 12px;border-bottom:1px solid #d6e0ec}
+.popw header .tt{display:flex;align-items:center;gap:10px}.popw header small{font-weight:400;color:var(--mute)}
+.popw header .ic{width:28px;height:28px;border-radius:8px;background:#fde8e6;color:var(--bad)}.popw header .ic svg{width:17px;height:17px}
+.wc{display:flex;gap:6px}.wc i{width:12px;height:12px;border-radius:50%;background:#cfd8e4}
+.bubble p{margin:0 0 8px}.bubble p:last-child{margin:0}</style>
 
 <div id="app">
  <div class="screen dash" id="dash" hidden>
@@ -469,7 +507,7 @@ function sendProgress(done){
 
 /* ---- Telas de apresentador ---- */
 let spT=0;
-function splash(c){AFTER='intro';if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>openAula(),2600);}
+function splash(c){AFTER='intro';if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(()=>show('intro'),2600);}
 function copyText(btn,txt,label){const ok=()=>{btn.textContent='Copiado';setTimeout(()=>{btn.textContent=label;},1800);};try{navigator.clipboard.writeText(txt).then(ok).catch(()=>{});}catch(e){}}
 function genQR(){
  const c=readCfg();
@@ -554,9 +592,42 @@ try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){con
 updHistBtn();
 setTimeout(()=>{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else{AFTER='setup';openAula();}},0);
 let S;
-const ICON={mail:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aaaff"/><stop offset="1" stop-color="#1d4fd8"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gm)"/><rect x="11" y="16" width="34" height="25" rx="4" fill="#fff"/><path d="M12 19l16 12 16-12" fill="none" stroke="#1d63d8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>',teams:'<svg viewBox="0 0 56 56"><defs><linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a7cff"/><stop offset="1" stop-color="#4a3fd0"/></linearGradient></defs><rect x="2" y="2" width="52" height="52" rx="14" fill="url(#gt)"/><rect x="10" y="12" width="36" height="26" rx="8" fill="#fff"/><path d="M18 38v8l9-8z" fill="#fff"/><circle cx="20" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="28" cy="25" r="2.8" fill="#5b4fe0"/><circle cx="36" cy="25" r="2.8" fill="#5b4fe0"/></svg>'};
+const IC={
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M7.5 8a2.5 2.5 0 1 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 1 1 0 5"/>',
+link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+win:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+plug:'<path d="M9 2v5M15 2v5M7 7h10v4a5 5 0 0 1-10 0zM12 16v6"/>',
+key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>',
+box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+pause:'<circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>',
+help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>',
+star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+cursor:'<path d="M5 3l14 7-6 2-2 6z"/>',
+clip:'<path d="M20 11l-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/>',
+alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'};
+const ic=(k,c)=>'<span class="ic'+(c?' '+c:'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg></span>';
+const nm=n=>'<span class="ic n">'+n+'</span>';
+const row=(i,t,d)=>'<div>'+i+'<span><b>'+t+'</b>'+d+'</span></div>';
+const tile=(c,p)=>'<svg viewBox="0 0 56 56"><rect width="56" height="56" rx="15" fill="'+c+'"/><svg x="12" y="12" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg></svg>';
+const ICON={mail:tile('#0f6cbd',IC.mail),teams:tile('#5b5fc7','<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 12h.01M12 12h.01M15 12h.01"/>')};
+const POPIC={8:'win',17:'plug',18:'phone',19:'box'};
+const HUES=['#5b5fc7','#0f6cbd','#2e7d6b','#b4542a','#7a4fa0','#8a6100'];
+const avc=n=>HUES[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%HUES.length];
+const avh=(n,c)=>'<span class="av'+(c?' '+c:'')+'" style="background:'+avc(n)+'">'+av(n)+'</span>';
+const strip=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+let LAST={};
 const NAME={mail:'E-mail',teams:'Teams'};
-const av=n=>n.replace(/\(.*\)/,'').trim().split(' ').map(w=>w[0]).slice(0,2).join('');
+const av=n=>n.replace(/\(.*\)/,'').trim().split(' ').filter(w=>/^[A-ZÀ-Ú]/.test(w)).map(w=>w[0]).slice(0,2).join('');
 const it=id=>ITEMS[id-1];
 let AC=null,muted=true;
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -578,12 +649,12 @@ function setShield(){const v=Math.max(0,S.shield);$('#mb').style.width=v+'%';$('
 
 function next(){
  if(S.cur>=ITEMS.length)return finish();
- const x=it(S.order[S.cur++]);S.arrived.push(x.id);S.pend=x.id;S.lock=Date.now()+700;S.time+=7+Math.floor(Math.random()*8);clock();
+ const x=it(S.order[S.cur++]);S.arrived.push(x.id);S.pend=x.id;S.lock=Date.now()+700;S.time+=7+Math.floor(Math.random()*8);clock();(S.at=S.at||{})[x.id]=$('#clock').textContent;
  ping();
  if(x.app==='popup'){showPop(x);}
  else if(S.cur>1){S.open=x.app;S.sel=x.id;S.det=true;$('#toast').hidden=true;}
  else{const t=$('#toast');t.hidden=false;
-  t.innerHTML='<b>'+(x.app==='mail'?'Novo e-mail':'Nova mensagem no Teams')+'</b>'+x.name+'<br><small>Clique aqui para abrir</small>';
+  t.className=x.app;t.innerHTML=ic(x.app==='mail'?'mail':'chat','app')+'<span><b>'+(x.app==='mail'?'Novo e-mail':'Nova mensagem no Teams')+'</b>'+x.name+'<br><small>Toque aqui para abrir</small></span>';
   t.onclick=()=>{t.hidden=true;S.open=x.app;S.sel=x.id;S.det=true;render();};}
  render();
 }
@@ -593,20 +664,26 @@ function render(){
  $('#tasks').innerHTML=S.open?'<button data-act="app" data-app="'+S.open+'">'+NAME[S.open]+'</button>':'';
  const w=$('#win');
  if(S.open&&S.pend&&it(S.pend).app===S.open)$('#toast').hidden=true;
- if(!S.open){w.hidden=true;return;}
+ if(!S.open){w.hidden=true;LAST={};return;}
  const app=S.open,items=S.arrived.map(it).filter(x=>x.app===app).reverse();
  if(!S.sel||it(S.sel).app!==app)S.sel=items.length?items[0].id:null;
  const list=items.length?items.map(x=>{const r=S.res[x.id];
-  return '<button class="row'+(x.id===S.sel?' sel':'')+(r?'':' new')+'" data-act="pick" data-id="'+x.id+'"><b>'+x.name+'</b><small>'+x.subj+'</small>'+(r?'<span class="tag '+(r.choice==='stop'?'bad':'ok')+'">'+(r.choice==='stop'?'Reportado':'Aprovado')+'</span>':'')+'</button>';}).join(''):'<div class="empty">Nenhuma mensagem ainda.</div>';
+  const pv=app==='mail'?x.subj:strip(x.body).slice(0,60);
+  return '<button class="row'+(x.id===S.sel?' sel':'')+(r?'':' new')+'" data-act="pick" data-id="'+x.id+'">'+avh(x.name)+'<span class="rt"><b>'+x.name+'<em>'+((S.at&&S.at[x.id])||'')+'</em></b><small>'+pv+'</small>'+(r?'<span class="tag '+(r.choice==='stop'?'bad':'ok')+'">'+(r.choice==='stop'?'Reportado':'Aprovado')+'</span>':'')+'</span></button>';}).join(''):'<div class="empty">Nenhuma mensagem ainda.</div>';
  w.hidden=false;
- w.innerHTML='<div class="tbar"><span>'+NAME[app]+' · '+EMP+'</span><button data-act="close" aria-label="Fechar janela">×</button></div><div class="split'+(S.det?' det':'')+'"><div class="list">'+list+'</div><div class="detail">'+(S.sel?detail(it(S.sel)):'<div class="empty">Escolha uma mensagem.</div>')+'</div></div><div id="stat" hidden></div>';
+ w.className='win app-'+app;w.innerHTML='<div class="tbar"><span class="tt">'+ic(app==='mail'?'mail':'chat')+'<span>'+NAME[app]+' <small>· '+EMP+'</small></span></span><button data-act="close" aria-label="Fechar janela">×</button></div><div class="split'+(S.det?' det':'')+'"><div class="list">'+list+'</div><div class="detail">'+(S.sel?detail(it(S.sel)):'<div class="empty">Escolha uma mensagem.</div>')+'</div></div><div id="stat" hidden></div>';
  const r=w.querySelector('.res');if(r)r.scrollIntoView({block:'nearest'});
+ const M=window.Motion;if(M&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const {animate,stagger}=M,key=app+'|'+S.sel;
+  if(app!==LAST.app)animate(w,{opacity:[0,1]},{duration:.25});
+  if(app!==LAST.app||items.length!==LAST.n)animate(w.querySelectorAll('.row'),{opacity:[0,1],transform:['translateX(-10px)','translateX(0px)']},{duration:.35,delay:stagger(.05)});
+  if(key!==LAST.key)animate(w.querySelectorAll('.detail > *:not(.back)'),{opacity:[0,1],transform:['translateY(8px)','translateY(0px)']},{duration:.35,delay:stagger(.05)});
+  LAST={app:app,n:items.length,key:key};}
 }
 function actions(x){
  const r=S.res[x.id],o=x.opts||{go:'Parece seguro',stop:'Reportar como golpe'};
  if(r){const ok=(r.choice==='stop')===x.phish,last=S.cur>=ITEMS.length;
   const t=x.phish?(ok?'Muito bem! Era golpe.':'Cuidado! Era golpe.'):(ok?'Correto! Esta mensagem é verdadeira.':'Esta mensagem era verdadeira.');
-  return '<div class="res '+(ok?'okk':'no')+'"><h3>'+t+'</h3>'+(ok?'<p class="pts">+'+r.pts+' pontos'+(r.st>1?' · sequência x'+r.st:'')+'</p>':'')+'<ul>'+x.why.map(y=>'<li>'+y+'</li>').join('')+'</ul>'+
+  return '<div class="res '+(ok?'okk':'no')+'"><div class="rh">'+ic(ok?'check':'alert')+'<h3>'+t+'</h3></div>'+(ok?'<p class="pts">+'+r.pts+' pontos'+(r.st>1?' · sequência x'+r.st:'')+'</p>':'')+'<ul>'+x.why.map(y=>'<li>'+y+'</li>').join('')+'</ul>'+
    (x.phish&&!ok?'<p><b>Se fosse real:</b> '+x.risk+'</p>':'')+
    (x.phish?'<p><b>O que fazer:</b> não clique, não responda e avise a TI.</p>':(!ok?'<p>Desconfiar é bom, mas aqui não era preciso reportar.</p>':''))+
    '<button class="b" data-act="cont">'+(last?'Ver meu resultado':'Continuar')+'</button></div>';}
@@ -615,14 +692,14 @@ function actions(x){
   (S.hints[x.id]?'<div class="hint"><b>Dica:</b> '+x.hint+'</div>':'<button class="b ghost" data-act="hint">Quero uma dica</button>');
 }
 function detail(x){
- const d=S.res[x.id];
+ const d=S.res[x.id],tm=(S.at&&S.at[x.id])||'';
  const head='<button class="back" data-act="back">‹ Voltar à lista</button>';
- if(x.app==='teams')return head+'<div class="from"><span class="av">'+av(x.name)+'</span><div><b>'+x.name+'</b><div class="addr'+(d&&x.badAddr?' clue-on':'')+'">'+x.role+(x.badAddr?'':' · Disponível')+'</div></div></div><div class="dbody'+(d?' done':'')+'"><div class="bubble">'+x.body+'</div></div>'+actions(x);
- return head+'<h2>'+x.subj+'</h2><div class="from"><span class="av">'+av(x.name)+'</span><div><b>'+x.name+'</b><div class="addr'+(d&&x.badAddr?' clue-on':'')+'">'+x.addr+'</div></div></div><div class="dbody'+(d?' done':'')+'">'+x.body+(x.att?'<div class="att'+(x.attBad?' clue':'')+'">Anexo: '+x.att+'</div>':'')+'</div>'+actions(x);
+ if(x.app==='teams')return head+'<div class="chead">'+avh(x.name,'lg')+'<div><b>'+x.name+'</b><div class="addr'+(d&&x.badAddr?' clue-on':'')+'">'+x.role+'</div></div>'+(x.badAddr?'<span class="pill ext">Externo</span>':'<span class="pill on">Disponível</span>')+'</div><div class="chat"><div class="day">Hoje</div><div class="msg">'+avh(x.name,'sm')+'<div class="mb"><div class="meta"><b>'+x.name+'</b> '+tm+'</div><div class="bubble'+(d?' done':'')+'">'+x.body+'</div></div></div></div>'+actions(x);
+ return head+'<h2>'+x.subj+'</h2><div class="from">'+avh(x.name)+'<div><b>'+x.name+'</b> <span class="addr'+(d&&x.badAddr?' clue-on':'')+'">&lt;'+x.addr+'&gt;</span><div class="to">Para: você · Hoje, '+tm+'</div></div></div><div class="dbody'+(d?' done':'')+'">'+x.body+(x.att?'<div class="att'+(x.attBad?' clue':'')+'">'+ic('clip')+x.att+'</div>':'')+'</div>'+actions(x);
 }
 function popHTML(x){
  const r=S.res[x.id];
- return '<div class="popw"><header>'+x.name+' · '+(x.win||'janela do navegador')+'</header><div class="in dbody'+(r?' done':'')+'">'+x.body+(r?actions(x):(function(){const g='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="go">'+x.opts.go+'</button>',t='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="stop">'+x.opts.stop+'</button>';return '<div class="decide">'+(x.id%2?g+t:t+g)+'</div>';})()+(S.hints[x.id]?'<div class="hint"><b>Dica:</b> '+x.hint+'</div>':'<button class="b ghost" data-act="hint">Quero uma dica</button>'))+'</div></div>';
+ return '<div class="popw"><header><span class="tt">'+ic(POPIC[x.id]||'win')+'<span>'+x.name+' <small>· '+(x.win||'janela do navegador')+'</small></span></span><span class="wc"><i></i><i></i></span></header><div class="in dbody'+(r?' done':'')+'">'+x.body+(r?actions(x):(function(){const g='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="go">'+x.opts.go+'</button>',t='<button class="b neu" data-act="dec" data-id="'+x.id+'" data-c="stop">'+x.opts.stop+'</button>';return '<div class="decide">'+(x.id%2?g+t:t+g)+'</div>';})()+(S.hints[x.id]?'<div class="hint"><b>Dica:</b> '+x.hint+'</div>':'<button class="b ghost" data-act="hint">Quero uma dica</button>'))+'</div></div>';
 }
 function showPop(x){const p=$('#pop');p.hidden=false;p.innerHTML=popHTML(x);}
 function dec(id,c,ev){
@@ -648,29 +725,6 @@ function finish(){
   '<p><b>'+RULES.length+' regras de ouro</b></p><ol class="rules">'+RULES.map(r=>'<li>'+r+'</li>').join('')+'</ol><button class="b" id="certBtn" style="width:100%;margin-bottom:8px">Gerar meu certificado</button><button class="b neu" id="again" style="width:100%">Jogar de novo</button></div>';
 }
 const G=(t,d)=>'<button class="gl" data-d="'+d+'">'+t+'</button>';
-const IC={
-user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
-clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M7.5 8a2.5 2.5 0 1 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 1 1 0 5"/>',
-link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
-chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
-win:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
-plug:'<path d="M9 2v5M15 2v5M7 7h10v4a5 5 0 0 1-10 0zM12 16v6"/>',
-key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>',
-box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
-ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
-mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
-pause:'<circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/>',
-phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
-shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
-bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>',
-help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>',
-star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
-cursor:'<path d="M5 3l14 7-6 2-2 6z"/>',
-lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'};
-const ic=(k,c)=>'<span class="ic'+(c?' '+c:'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg></span>';
-const nm=n=>'<span class="ic n">'+n+'</span>';
-const row=(i,t,d)=>'<div>'+i+'<span><b>'+t+'</b>'+d+'</span></div>';
 function slides(){
  const fk=DOM.replace(/[aeo]/,c=>({a:'4',e:'3',o:'0'}[c]));
  const sv=$('#intro .lu').outerHTML.replace(/lg1|lg2|sg/g,m=>m+'c');
@@ -707,7 +761,7 @@ function start(){
  if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
  PNAME=nm;begin();}
 function begin(){
- PID=rid(10);
+ PID=rid(10);LAST={};
  init();sendProgress(false);ac();updHud();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
 
 document.addEventListener('click',e=>{
@@ -716,7 +770,7 @@ document.addEventListener('click',e=>{
  if(e.target.id==='aSkip')return show(AFTER);
  if(e.target.classList.contains('gl')){const g=$('#aGl');g.textContent=e.target.textContent+': '+e.target.dataset.d;g.hidden=false;return;}
  if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
- if(e.target.closest('#splash')){clearTimeout(spT);openAula();return;}
+ if(e.target.closest('#splash')){clearTimeout(spT);show('intro');return;}
  if(e.target.id==='gen')return genQR();
  if(e.target.id==='copyl')return copyText(e.target,QURL,'Copiar link do jogo');
  if(e.target.id==='copyd')return copyText(e.target,DURL,'Copiar link do painel');
