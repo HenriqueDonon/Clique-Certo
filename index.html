@@ -315,7 +315,7 @@ mark{background:none;color:inherit}
    <p class="mini" id="qrLink" style="overflow-wrap:anywhere"></p>
    <p class="mini" id="dashLink" style="overflow-wrap:anywhere"></p>
    <p class="mini" id="fbNote" hidden style="color:var(--bad)"></p>
-   <div style="display:grid;gap:8px;margin-top:8px"><button class="b ghost" id="copyl">Copiar link do jogo</button><button class="b neu" id="btnDash">Abrir painel da turma</button><button class="b ghost" id="copyd">Copiar link do painel</button><button class="b" id="goPlay">Continuar para o jogo</button><button class="b ghost" id="backCfg">Mudar empresa</button></div>
+   <div style="display:grid;gap:8px;margin-top:8px"><button class="b ghost" id="copyl">Copiar link do jogo</button><button class="b neu" id="btnDash">Abrir painel da turma</button><button class="b ghost" id="copyd">Copiar link do painel</button><button class="b" id="goPlay">Começar a aula</button><button class="b ghost" id="backCfg">Mudar empresa</button></div>
   </div>
  </div>
  <div class="screen splash" id="splash" hidden>
@@ -773,7 +773,7 @@ try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){con
 updHistBtn();
 if(needLogin())$('#outBtn').hidden=false;
 addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#login').hidden){const b=$('#lgB [data-lg]');if(b){e.preventDefault();lgAct(b.dataset.lg);}}});
-setTimeout(()=>{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else needAdmin(()=>{AFTER='setup';openAula();});},0);
+setTimeout(()=>{const c=fromHash();if(c&&c.dash)openDash(c.dash);else if(c)splash(c);else needAdmin(()=>show('setup'));},0);
 let S;
 const IC={
 user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
@@ -985,8 +985,10 @@ function aulaShow(){
  $('#aBack').style.display=AI?'':'none';$('#aNext').textContent=AI===n-1?'Continuar':AI===0?'Iniciar aula':'Próximo';
  const sc=$('#aula');if(sc)sc.scrollTop=0;}
 let AFTER='intro';
+let PENDC=null;
+function afterAula(){if(AFTER==='splashc'&&PENDC)return splash(PENDC);show(AFTER==='splashc'?'setup':AFTER);}
 function openAula(){AI=0;AS=slides();show('aula');aulaShow();}
-function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return show(AFTER);AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
+function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return afterAula();AI=Math.max(0,AI+d);tone(660+AI*60,0,.1,'sine',.1);aulaShow();}
 document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='ArrowRight')aulaGo(1);if(e.key==='ArrowLeft'&&AI)aulaGo(-1);});
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
@@ -999,7 +1001,7 @@ function begin(){
 document.addEventListener('click',e=>{
  if(e.target.id==='aNext')return aulaGo(1);
  if(e.target.id==='aBack')return aulaGo(-1);
- if(e.target.id==='aSkip')return show(AFTER);
+ if(e.target.id==='aSkip')return afterAula();
  if(e.target.classList.contains('gl')){const g=$('#aGl');g.textContent=e.target.textContent+': '+e.target.dataset.d;g.hidden=false;return;}
  if(e.target.id==='mute'){muted=!muted;e.target.textContent=muted?'Mudo':'Som';if(!muted){ac();tick();}return;}
  if(e.target.closest('#splash')){clearTimeout(spT);afterSplash();return;}
@@ -1018,7 +1020,7 @@ document.addEventListener('click',e=>{
  if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
  if(e.target.id==='certBack'){$('#cert').hidden=true;$('#desk').hidden=false;return;}
  if(e.target.id==='backCfg')return show('setup');
- if(e.target.id==='goPlay'){const c=readCfg();c.sid=SID;return splash(c);}
+ if(e.target.id==='goPlay'){const c=readCfg();c.sid=SID;PENDC=c;AFTER='splashc';return openAula();}
  if(e.target.id==='go2')return startPhase2();
  if(e.target.id==='chk2')return chkRel();
  if(e.target.id==='cAula')return ctlAula();
