@@ -243,6 +243,10 @@ mark{background:none;color:inherit}
 .evt{text-align:center;margin:6px 0 12px}
 .ctop{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.ctop b{font:800 1.8rem 'Sora',var(--f);color:#b4efff}.ctop span{color:#9fd4f5}
 .cbar{flex:1;min-width:140px;height:10px;border-radius:5px;background:#ffffff1f;overflow:hidden}.cbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2cc3ff,#5bd48b);transition:width .5s}
+.emrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.emrow input{flex:1 1 140px}#emDom{font-weight:700;overflow-wrap:anywhere}.ckl{display:flex!important;gap:8px;align-items:center;font-weight:400!important;margin-top:4px}.ckl input{width:auto!important}
+#dPart select,#dPart textarea{font:inherit;padding:10px;border-radius:10px;border:1px solid #2b5d86;background:#06172a;color:#fff}#dPart textarea{width:100%;min-height:130px;margin-top:6px}#dPart input[type=file]{width:auto;padding:8px;color:#9fd4f5}
+#pTab{width:100%;border-collapse:collapse;margin-top:10px;font-size:.92rem}#pTab th{text-align:left;color:#9fd4f5;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #2b5d86}#pTab td{padding:7px 8px;border-bottom:1px solid #ffffff14;color:#e8f2fb}#pTab td small{display:block;color:#9fb6c9}
+.st{display:inline-block;border-radius:10px;padding:1px 9px;font-size:.8rem;font-weight:700}.st.d{background:#1f7a4a;color:#e9fff2}.st.a{background:#1d4f8a;color:#e6f2ff}.st.n{background:#7a2a2a;color:#ffecec}.st.f{background:#555f6b;color:#fff}
 .crow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}.crow label{display:grid;gap:4px;color:#9fd4f5;font-size:.85rem}.crow input{width:150px;border:1px solid #2b5d86;background:#06172a;color:#fff;border-radius:10px;padding:12px;font:inherit}
 .b:disabled{opacity:.6;cursor:default;filter:saturate(.6)}
 .dash .b.ghost{color:#9fd4f5}
@@ -277,6 +281,11 @@ mark{background:none;color:inherit}
     <p class="mini" id="cNote"></p></section>
    <div class="dstats" id="dStats"></div>
    <section class="dcard" id="dCmp"><h3>Antes x depois</h3><div class="dstats" id="dCmpS"></div><p class="mini" id="dCmpN"></p><div class="tbw"><table id="dTab"></table></div></section>
+   <section class="dcard" id="dPart"><h3>Participantes esperados</h3>
+    <div class="dstats" id="pStats"></div><p class="mini" id="pNote"></p>
+    <div class="crow" id="pTools"><select id="pFil" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="n">Não entraram</option><option value="a">Em andamento</option><option value="d">Concluíram</option><option value="f">Fora da lista</option></select><select id="pSet" aria-label="Filtrar por setor"></select><button class="b neu" id="pCopy">Copiar e-mails dos pendentes</button><button class="b neu" id="pCsv">Baixar pendentes</button><button class="b ghost" id="pImpB">Importar lista</button></div>
+    <div id="pImp" hidden><p class="mini">Cole a lista exportada do AD ou do Excel, uma pessoa por linha: <b>Nome; E-mail; Setor</b>. Também aceita vírgula ou colunas copiadas do Excel. Ou escolha um arquivo .csv.</p><textarea id="pTxt" placeholder="Maria Silva;maria.silva@empresa.com.br;Financeiro"></textarea><div class="crow"><input type="file" id="pFile" accept=".csv,.txt,text/csv"><button class="b" id="pSave">Salvar lista</button><button class="b ghost" id="pCancel">Cancelar</button></div><p class="mini" id="pMsg"></p></div>
+    <div class="tbw"><table id="pTab"></table></div></section>
    <div class="dgrid"><section class="dcard"><h3>Ranking</h3><ol id="dRank"></ol></section><section class="dcard"><h3>Onde mais erraram</h3><ol id="dHard"></ol></section></div>
    <div class="dgrid"><section class="dcard"><h3>Por tipo de mensagem</h3><ol id="dCat"></ol></section><section class="dcard"><h3>Ainda na fase 1</h3><ol id="dF1"></ol></section></div>
   </div>
@@ -315,6 +324,7 @@ mark{background:none;color:inherit}
    <h1>Personalize o jogo</h1>
    <p>Digite a empresa e gere o QR Code. Quem escanear já entra no jogo com o nome e os e-mails da empresa.</p>
    <div class="cfg"><label for="inNome">Nome da empresa</label><input id="inNome" placeholder="ex.: Ativa Security" maxlength="40" autocomplete="off"><label for="inDom">Final do e-mail da empresa (depois do @)</label><input id="inDom" placeholder="ex.: ativasecurity.com.br" autocomplete="off" inputmode="url" autocapitalize="none"></div>
+   <label class="ckl" style="color:var(--ink);margin:-8px 0 8px"><input id="inPe" type="checkbox" checked> Pedir o e-mail da empresa aos participantes</label>
    <p class="mini" id="domHint"></p>
    <button class="b" id="gen" style="width:100%">Gerar QR Code</button>
    <button class="b neu" id="histBtn" style="width:100%;margin-top:10px">Relatórios salvos</button>
@@ -386,7 +396,7 @@ mark{background:none;color:inherit}
     <li><i>4</i><span>São <b>duas fases</b>. Entre elas, o instrutor faz uma apresentação.</span></li>
    </ul>
    <p style="color:var(--mute);font-size:.95rem">É só um jogo. Nada aqui é real e nenhum dado seu é usado.</p>
-   <div class="cfg"><label for="inPlayer">Seu nome ou apelido</label><input id="inPlayer" placeholder="ex.: Maria" maxlength="30" autocomplete="off"><p class="mini" id="nameErr" hidden style="color:var(--bad);margin:0">Digite seu nome para começar.</p><p class="mini" style="margin:0">Ele aparece no seu certificado e para quem conduz o treinamento.</p></div>
+   <div class="cfg"><label for="inPlayer">Seu nome ou apelido</label><input id="inPlayer" placeholder="ex.: Maria" maxlength="30" autocomplete="off"><p class="mini" id="nameErr" hidden style="color:var(--bad);margin:0">Digite seu nome para começar.</p><p class="mini" style="margin:0">Ele aparece no seu certificado e para quem conduz o treinamento.</p><div id="emW" hidden style="display:grid;gap:6px;margin-top:6px"><label for="inEmail">Seu e-mail da empresa</label><div class="emrow"><input id="inEmail" placeholder="ex.: maria.silva" maxlength="64" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="email"><span id="emDom"></span></div><p class="mini" id="emErr" hidden style="color:var(--bad);margin:0">Digite a parte do seu e-mail que vem antes do @.</p></div></div>
    <button class="b" id="start" style="width:100%">Começar o expediente</button>
   </div>
  </div>
@@ -528,6 +538,7 @@ BASE.forEach(x=>{x.set=SETA.indexOf(x.id)>=0?'A':'B';x.cat=x.app==='popup'?'popu
 let ITEMS=BASE;
 const RULES=['Olhe <b>quem enviou</b>. O endereço é mesmo da empresa?','Desconfie de <b>pressa, medo e prêmios</b>.','<b>Passe o mouse no link</b> antes de clicar e leia o trecho antes da primeira barra.','Nunca passe <b>códigos ou senhas</b>, nem faça pagamentos só porque uma mensagem pediu.','Na dúvida, <b>confirme por outro canal</b> (telefone, pessoalmente) e avise a TI.','<b>Não instale programas</b>, não ligue pendrives achados e negue aprovações que você não pediu.'];
 const $=s=>document.querySelector(s);
+let PE=false,PEMAIL='',ESP=[],PFIL='all',PSET='';
 let BACKTO='setup',EMP='Ativa Security',RAWN='Ativa Security',DOM='ativasecurity.com.br',QURL='',DURL='',SID='',PNAME='',PID='',DB_UNSUB=null,LASTP=[],RES=null,ORD='AB',PH=1,F1=null,RELEASED=false,WAIT_UNSUB=null;
 const ART_URL='https://claude.ai/artifact/WTmXE8YxQVxWSfcXNGLPbP';
 const BASE_URL=PUBLIC_URL||(/\.github\.io$/.test(location.hostname)?location.origin+location.pathname:ART_URL);
@@ -558,11 +569,11 @@ function openHist(){
  dbp.then(db=>{if(!db){paint([]);return;}
   db.collection('cs_sessions').get().then(q=>{const a=[];q.forEach(d=>{const v=d.data()||{};a.push({sid:d.id,n:v.empresa||'Turma',t:v.criadoEm||0});});a.sort((x,y)=>y.t-x.t);paint(a.slice(0,60));}).catch(()=>{$('#histList').innerHTML='<li class="mini">Não foi possível carregar os relatórios.</li>';});});
 }
-function readCfg(){const n=($('#inNome').value||'').replace(/\|/g,'').trim().slice(0,40);let d=cleanDom($('#inDom').value||'');if(n&&!d)d=(slug(n)||'empresa')+'.com.br';return{n:n,d:d};}
+function readCfg(){const n=($('#inNome').value||'').replace(/\|/g,'').trim().slice(0,40);let d=cleanDom($('#inDom').value||'');if(n&&!d)d=(slug(n)||'empresa')+'.com.br';return{n:n,d:d,pe:!!($('#inPe')&&$('#inPe').checked)};}
 function hint(){const c=readCfg();$('#domHint').textContent=c.n?'E-mails de exemplo no jogo: nome@'+c.d:'';}
 function fromHash(){try{const h=location.hash.replace(/^#/,'');if(!h)return null;
  if(h.indexOf('painel~')===0)return{dash:h.slice(7).replace(/[^a-z0-9]/g,'')};
- const p=unb64(h).split('|');if(p[0]&&p[1])return{n:p[0].slice(0,40),d:cleanDom(p[1])||'empresa.com.br',sid:(p[2]||'').replace(/[^a-z0-9]/g,'')};}catch(e){}return null;}
+ const p=unb64(h).split('|');if(p[0]&&p[1])return{n:p[0].slice(0,40),d:cleanDom(p[1])||'empresa.com.br',sid:(p[2]||'').replace(/[^a-z0-9]/g,''),pe:p[3]==='1'};}catch(e){}return null;}
 
 /* ---- Firebase (só carrega se FB estiver preenchido) ---- */
 function loadScript(u){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
@@ -654,23 +665,23 @@ function sendProgress(done){
   const answers={};let hits=0;Object.keys(S.res).forEach(k=>{answers[k]=S.res[k].ok?1:0;if(S.res[k].ok)hits++;});
   const s1=phStat(ORD[0]),s2=phStat(ORD[1]);
   const d={nome:PNAME,score:S.score,hits:hits,answered:Object.keys(S.res).length,total:ITEMS.length,shield:Math.max(0,S.shield),best:S.best,done:!!done,answers:answers,t:Date.now(),ordem:ORD,fase:String(PH),f1h:s1.h,f1t:s1.t,f2h:s2.h,f2t:s2.t};
-  if(F1)d.f1fim=F1.fim;
+  if(F1)d.f1fim=F1.fim;if(PEMAIL)d.email=PEMAIL;
   db.collection('cs_sessions').doc(SID).collection('players').doc(PID).set(d,{merge:true}).catch(()=>{});
  });
 }
 
 /* ---- Telas de apresentador ---- */
 let spT=0;
-function splash(c){AFTER='intro';if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(afterSplash,2600);}
+function splash(c){PE=!!c.pe;$('#emW').hidden=!PE;$('#emDom').textContent='@'+cleanDom(c.d||'');AFTER='intro';if(c.sid!==undefined)SID=c.sid;setCfg(c.n,c.d);show('splash');clearTimeout(spT);spT=setTimeout(afterSplash,2600);}
 function copyText(btn,txt,label){const ok=()=>{btn.textContent='Copiado';setTimeout(()=>{btn.textContent=label;},1800);};try{navigator.clipboard.writeText(txt).then(ok).catch(()=>{});}catch(e){}}
 function genQR(){
  const c=readCfg();
  if(!c.n){$('#inNome').focus();$('#domHint').textContent='Digite o nome da empresa para continuar.';return;}
  setCfg(c.n,c.d);SID=rid(8);
- QURL=BASE_URL+'#'+b64(c.n+'|'+c.d+'|'+SID);DURL=BASE_URL+'#painel~'+SID;
+ QURL=BASE_URL+'#'+b64(c.n+'|'+c.d+'|'+SID+'|'+(c.pe?'1':'0'));DURL=BASE_URL+'#painel~'+SID;
  $('#qrLink').textContent='Link do jogo: '+QURL;$('#dashLink').textContent='Link do painel: '+DURL;
  $('#fbNote').hidden=!!FB.apiKey;$('#fbNote').textContent='Painel da turma desativado: falta configurar o Firebase no início do arquivo do jogo.';
- dbp.then(db=>{if(db)db.collection('cs_sessions').doc(SID).set(Object.assign({empresa:c.n,dominio:c.d,criadoEm:Date.now()},AUTH&&AUTH.currentUser&&AUTH.currentUser.email?{dono:AUTH.currentUser.email}:{})).catch(()=>{});});
+ dbp.then(db=>{if(db)db.collection('cs_sessions').doc(SID).set(Object.assign({empresa:c.n,dominio:c.d,criadoEm:Date.now(),pedeEmail:!!c.pe},AUTH&&AUTH.currentUser&&AUTH.currentUser.email?{dono:AUTH.currentUser.email}:{})).catch(()=>{});});
  histAdd(SID,c.n);updHistBtn();
  let svg='';try{const q=qrcode(0,'M');q.addData(QURL);q.make();svg=q.createSvgTag({cellSize:5,margin:2,scalable:true});}catch(e){}
  $('#qrBox').innerHTML=svg||'<p class="mini">Não foi possível desenhar o QR Code. Copie o link abaixo.</p>';
@@ -692,12 +703,12 @@ function demoPlayers(){let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;cons
   const run=(l,lim,boost)=>{let h=0;BASE.filter(x=>x.set===l).slice(0,lim).forEach(x=>{const ok=r()>(hard[x.id]||.12)*boost?1:0;ans[x.id]=ok;cnt++;if(ok){h++;st++;best=Math.max(best,st);sc+=100+25*Math.min(st,8);}else st=0;});return h;};
   const k=i<9?'d':i===9?'dt':i<12?'p2':'p1';
   const f1h=run(ord[0],k==='p1'?6:11,1),f2h=k==='p1'?0:run(ord[1],k==='p2'?5:11,.55);
-  return{nome:n,ordem:ord,fase:k==='p1'?'1':'2',score:sc,hits:f1h+f2h,answered:cnt,total:22,shield:100,best:best,done:k==='d'||k==='dt',answers:ans,f1h:f1h,f1t:11,f1fim:k==='p1'?null:(k==='dt'?T+120000:T-Math.floor(r()*900000)),f2h:f2h,f2t:11};});}
+  return{nome:n,email:n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'@empresa.com.br',ordem:ord,fase:k==='p1'?'1':'2',score:sc,hits:f1h+f2h,answered:cnt,total:22,shield:100,best:best,done:k==='d'||k==='dt',answers:ans,f1h:f1h,f1t:11,f1fim:k==='p1'?null:(k==='dt'?T+120000:T-Math.floor(r()*900000)),f2h:f2h,f2t:11};});}
 function fbUpd(d){if(CURSID==='demo')return;dbp.then(db=>db&&db.collection('cs_sessions').doc(CURSID).update(d)).catch(()=>{});}
 function ctlAula(){if(SESS.aulaEm)return;SESS.aulaEm=Date.now();fbUpd({aulaEm:SESS.aulaEm});renderDash(LASTP);}
 function ctlRel(){if(SESS.fase2)return;if(!ARM){ARM=1;renderCtl();setTimeout(()=>{ARM=0;renderCtl();},4000);return;}ARM=0;const t=Date.now(),u={fase2:true,fase2Em:t};SESS.fase2=true;SESS.fase2Em=t;if(!SESS.aulaEm){SESS.aulaEm=t;u.aulaEm=t;}fbUpd(u);renderDash(LASTP);}
 function renderCtl(){
- const a=LASTP,n=a.length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length,N=Math.max(n,SESS.esperadas||0),own=isOwner();
+ const a=LASTP,n=a.length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length,N=Math.max(n,ESP.length||SESS.esperadas||0),own=isOwner();
  $('#cReady').textContent=ready+' de '+N;$('#cBar').style.width=(N?Math.round(ready/N*100):0)+'%';
  $('#cExpW').hidden=!own;$('#cAula').hidden=!own;$('#cRel').hidden=!own;$('#cOwn').hidden=own;
  if(document.activeElement!==$('#cExp'))$('#cExp').value=SESS.esperadas||'';
@@ -708,14 +719,15 @@ function renderCtl(){
 }
 function openDash(sid,name){if(sid==='demo'||ADMIN||!needLogin())return openDash2(sid,name);needAdmin(()=>openDash2(sid,name));}
 function openDash2(sid,name){
- CURSID=sid;SESS={};ARM=0;
+ CURSID=sid;SESS={};ARM=0;ESP=[];PFIL='all';PSET='';$('#pImp').hidden=true;
  show('dash');$('#dWhen').textContent='';$('#dName').textContent=name||'Turma '+sid;$('#dMsg').textContent='Carregando...';LASTP=[];renderDash([]);
- if(sid==='demo'){$('#dName').textContent='Turma de exemplo';$('#dMsg').textContent='Dados de exemplo, só para ver como fica.';const d=demoPlayers();renderDash(d);return;}
+ if(sid==='demo'){$('#dName').textContent='Turma de exemplo';$('#dMsg').textContent='Dados de exemplo, só para ver como fica.';const d=demoPlayers();ESP=demoEsp(d);renderDash(d);return;}
  dbp.then(db=>{
   if(!db){$('#dMsg').textContent=FB.apiKey?'Não foi possível conectar ao Firebase.':'O painel precisa do Firebase configurado no início do arquivo do jogo.';return;}
   const u1=db.collection('cs_sessions').doc(sid).onSnapshot(d=>{if(d.exists){const v=d.data();SESS=v||{};if(v.empresa)$('#dName').textContent=v.empresa;if(v.criadoEm)$('#dWhen').textContent='Executado em '+fmtDT(v.criadoEm);renderDash(LASTP);}},()=>{});
-  const u2=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));$('#dMsg').textContent=a.length?'':'Aguardando os primeiros jogadores...';renderDash(a);},()=>{$('#dMsg').textContent='Sem permissão ou sem conexão com o painel.';});
-  DB_UNSUB=()=>{try{u1();}catch(e){}try{u2();}catch(e){}};
+  const u2=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));$('#dMsg').textContent=a.length?'':'Aguardando os primeiros jogadores...';renderDash(dedupe(a));},()=>{$('#dMsg').textContent='Sem permissão ou sem conexão com o painel.';});
+  const u3=db.collection('cs_sessions').doc(sid).collection('esperados').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));ESP=a;renderDash(LASTP);},()=>{});
+  DB_UNSUB=()=>{try{u1();}catch(e){}try{u2();}catch(e){}try{u3();}catch(e){}};
  });
 }
 function renderDash(a){
@@ -731,7 +743,7 @@ function renderDash(a){
  $('#dCmpN').textContent=el.length?('Conjunto A: '+pct(hA,tt)+'% de acertos · Conjunto B: '+pct(hB,tt)+'%.'+(late?' Fora da comparação: '+late+(late===1?' pessoa que terminou a fase 1 depois do início da aula.':' pessoas que terminaram a fase 1 depois do início da aula.'):'')):'A comparação aparece quando as primeiras pessoas concluírem as duas fases.';
  const rows=a.filter(p=>fz(p)!=='o').sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR'));
  $('#dTab').innerHTML=rows.length?'<thead><tr><th>Nome</th><th>Fase 1</th><th>Fase 2</th><th>Evolução</th></tr></thead><tbody>'+rows.map(p=>{const z=fz(p),f1=z!=='1',f2=z==='d',ev=f2&&p.f1h!=null?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):null;
-  return '<tr><td>'+esc(p.nome||'?')+'</td><td>'+(f1?p.f1h+'/'+p.f1t+' ('+pct(p.f1h,p.f1t)+'%)':'jogando')+'</td><td>'+(f2?p.f2h+'/'+p.f2t+' ('+pct(p.f2h,p.f2t)+'%)':z==='w'?'aguardando':z==='2'?'jogando':'–')+'</td><td>'+(tardio(p)&&f2?'<span class="tg2">tardio</span>':ev==null?'–':'<b class="'+(ev>=0?'up':'dn')+'">'+(ev>0?'+':'')+ev+' p.p.</b>')+'</td></tr>';}).join('')+'</tbody>':'';
+  return '<tr><td>'+esc(p.nome||'?')+(p.email?'<small style="display:block;font-weight:400;color:#9fb6c9">'+esc(p.email)+'</small>':'')+'</td><td>'+(f1?p.f1h+'/'+p.f1t+' ('+pct(p.f1h,p.f1t)+'%)':'jogando')+'</td><td>'+(f2?p.f2h+'/'+p.f2t+' ('+pct(p.f2h,p.f2t)+'%)':z==='w'?'aguardando':z==='2'?'jogando':'–')+'</td><td>'+(tardio(p)&&f2?'<span class="tg2">tardio</span>':ev==null?'–':'<b class="'+(ev>=0?'up':'dn')+'">'+(ev>0?'+':'')+ev+' p.p.</b>')+'</td></tr>';}).join('')+'</tbody>':'';
  const rk=a.slice().sort((x,y)=>(y.score||0)-(x.score||0)).slice(0,10),mx=Math.max(1,...rk.map(p=>p.score||0));
  $('#dRank').innerHTML=rk.length?rk.map((p,i)=>'<li class="rk"><b>'+(i+1)+'º</b><span>'+esc(p.nome||'?')+(fz(p)==='d'||fz(p)==='o'?'':' <small>(jogando)</small>')+'</span><b>'+(p.score||0)+'</b><div class="bar"><i style="width:'+Math.round((p.score||0)/mx*100)+'%"></i></div></li>').join(''):'<li class="dmsg">Sem jogadores ainda.</li>';
  const t={};a.forEach(p=>Object.keys(p.answers||{}).forEach(k=>{t[k]=t[k]||{n:0,e:0};t[k].n++;if(!p.answers[k])t[k].e++;}));
@@ -740,6 +752,7 @@ function renderDash(a){
  const ct={};Object.keys(t).forEach(k=>{const x=BASE[k-1];if(!x)return;const c=ct[x.cat]=ct[x.cat]||{n:0,e:0};c.n+=t[k].n;c.e+=t[k].e;});
  const cl=Object.keys(ct).sort((x,y)=>ct[y].e/ct[y].n-ct[x].e/ct[x].n);
  $('#dCat').innerHTML=cl.length?cl.map(k=>'<li class="hd"><span>'+CATL[k]+'</span><small>'+Math.round((1-ct[k].e/ct[k].n)*100)+'% de acertos</small></li>').join(''):'<li class="dmsg">Sem respostas ainda.</li>';
+ renderPart();
  const f1l=a.filter(p=>fz(p)==='1');
  $('#dF1').innerHTML=f1l.length?f1l.map(p=>'<li class="hd"><span>'+esc(p.nome||'?')+'</span>'+(SESS.aulaEm?'<small>terminará como tardio</small>':'')+'</li>').join(''):'<li class="dmsg">Ninguém na fase 1 agora.</li>';
 }
@@ -776,6 +789,7 @@ function chErr(rows){
   s+='<text x="0" y="'+(y+13)+'" font-size="12.5" fill="'+RC.ink+'">'+esc(l)+' <tspan fill="'+RC.mu+'" font-size="11">('+esc(r.tag)+')</tspan></text><rect x="0" y="'+(y+20)+'" width="'+PW+'" height="12" rx="3" fill="#eef1f5"/><rect x="0" y="'+(y+20)+'" width="'+w.toFixed(1)+'" height="12" rx="3" fill="'+RC.n+'"><title>'+esc(r.l)+': '+r.v+'% erraram ('+r.n+' respostas)</title></rect><text x="'+(PW+8)+'" y="'+(y+31)+'" font-size="12" font-weight="700" fill="'+RC.ink+'">'+r.v+'%</text>';});
  return s+'</svg>';
 }
+function chAd(rows){const W=720,rh=42,H=rows.length*rh+4,PW=W-60;let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Adesão por setor" style="font-family:inherit">';rows.forEach((r,i)=>{const y=i*rh+2,w=Math.max(3,PW*r.v/100);s+='<text x="0" y="'+(y+13)+'" font-size="12.5" fill="'+RC.ink+'">'+esc(r.l)+' <tspan fill="'+RC.mu+'" font-size="11">('+esc(r.tag)+')</tspan></text><rect x="0" y="'+(y+20)+'" width="'+PW+'" height="12" rx="3" fill="#eef1f5"/><rect x="0" y="'+(y+20)+'" width="'+w.toFixed(1)+'" height="12" rx="3" fill="'+RC.b+'"><title>'+esc(r.l)+': '+r.v+'% concluíram</title></rect><text x="'+(PW+8)+'" y="'+(y+31)+'" font-size="12" font-weight="700" fill="'+RC.ink+'">'+r.v+'%</text>';});return s+'</svg>';}
 const RECS={'email-golpe':'Reforçar a conferência do remetente e do endereço real dos links antes de clicar, e repetir simulações de phishing por e-mail periodicamente.','email-ok':'Mostrar exemplos de e-mails legítimos da empresa, para reduzir falsos alarmes e manter a confiança nos canais oficiais.','teams-golpe':'Orientar que pedidos urgentes no Teams (senhas, códigos, pagamentos, dados) sejam sempre confirmados por outro canal, e revisar o acesso de contas externas.','teams-ok':'Divulgar quais contas, equipes e canais do Teams são oficiais, para que as pessoas reconheçam as mensagens legítimas.','popup':'Treinar o reconhecimento de pop-ups e alertas falsos (falso suporte técnico, prêmios, vírus) e como fechar a janela com segurança.'};
 function repData(){
  const a=LASTP,el=a.filter(p=>fz(p)==='d'&&p.f1h!=null&&p.f2h!=null&&!tardio(p)),late=a.filter(p=>fz(p)==='d'&&tardio(p)).length;
@@ -798,26 +812,83 @@ function openRep(){
  else ex='<p>'+n+(n===1?' pessoa participou':' pessoas participaram')+' até agora. O comparativo antes x depois aparece quando os participantes concluírem as duas fases.</p>';
  const recs=weak.filter(w=>w.v<85).slice(0,3);if(!recs.length&&weak.length)recs.push(weak[0]);
  const st=p=>{const z=fz(p);return z==='d'?(tardio(p)?'Concluiu · fora do comparativo':'Concluiu'):z==='w'?'Aguardando fase 2':z==='2'?'Na fase 2':'Na fase 1';};
+ const ESX={};ESP.forEach(e=>ESX[e.email]=e.setor||'');
  const rows=D.a.filter(p=>fz(p)!=='o').sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR'));
- const tb='<table><thead><tr><th>Participante</th><th>Fase 1</th><th>Fase 2</th><th>Evolução</th><th>Situação</th></tr></thead><tbody>'+rows.map(p=>{const z=fz(p),f1=z!=='1',f2=z==='d',e=f2&&!tardio(p)?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):null;return '<tr><td>'+esc(p.nome||'?')+'</td><td>'+(f1?p.f1h+'/'+p.f1t+' ('+pct(p.f1h,p.f1t)+'%)':'–')+'</td><td>'+(f2?p.f2h+'/'+p.f2t+' ('+pct(p.f2h,p.f2t)+'%)':'–')+'</td><td>'+(e==null?'–':'<span class="'+(e>0?'pos':e<0?'neg':'')+'">'+sg(e)+' p.p.</span>')+'</td><td>'+st(p)+'</td></tr>';}).join('')+'</tbody></table>';
+ const tb='<table><thead><tr><th>Participante</th><th>Setor</th><th>Fase 1</th><th>Fase 2</th><th>Evolução</th><th>Situação</th></tr></thead><tbody>'+rows.map(p=>{const z=fz(p),f1=z!=='1',f2=z==='d',e=f2&&!tardio(p)?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):null;return '<tr><td>'+esc(p.nome||'?')+(p.email?'<br><small style="color:#5b6b7a">'+esc(p.email)+'</small>':'')+'</td><td>'+esc((p.email&&ESX[p.email.toLowerCase()])||'–')+'</td><td>'+(f1?p.f1h+'/'+p.f1t+' ('+pct(p.f1h,p.f1t)+'%)':'–')+'</td><td>'+(f2?p.f2h+'/'+p.f2t+' ('+pct(p.f2h,p.f2t)+'%)':'–')+'</td><td>'+(e==null?'–':'<span class="'+(e>0?'pos':e<0?'neg':'')+'">'+sg(e)+' p.p.</span>')+'</td><td>'+st(p)+'</td></tr>';}).join('')+'</tbody></table>';
+ let SN=0;
  let h='<div class="rhd"><div><div class="rbrand">Clique Seguro</div><h1>Relatório do treinamento de conscientização em segurança digital</h1></div><div class="rnote" style="text-align:right">Gerado em<br>'+now+'</div></div>'
  +'<div class="rmeta"><div><span>Empresa</span><b>'+esc(emp)+'</b></div><div><span>Data da turma</span><b>'+when+'</b></div><div><span>Participantes</span><b>'+n+'</b></div><div><span>Concluíram</span><b>'+D.done+'</b></div></div>'
- +'<section class="rsec"><h2>1. Resumo executivo</h2>'+(E?'<div class="rk"><div><b>'+D.p1+'%</b><span>acertos antes da apresentação</span></div><div><b>'+D.p2+'%</b><span>acertos depois da apresentação</span></div><div style="border-left-color:'+(D.dl>=0?'#15803d':'#b91c1c')+'"><b>'+sg(D.dl)+' p.p.</b><span>evolução da turma</span></div><div><b>'+pct(D.up,E)+'%</b><span>das pessoas melhoraram</span></div></div>':'')+ex+'</section>';
- if(E){h+='<section class="rsec"><h2>2. Acertos por tipo de mensagem</h2><p class="rnote">Percentual de respostas corretas em cada tipo de mensagem simulada, antes e depois da apresentação.</p>'+repLeg()+chHbar([{l:'Geral',a:D.p1,b:D.p2,bold:1}].concat(D.cats))+'</section>'
-  +'<section class="rsec"><h2>3. Distribuição dos participantes</h2><p class="rnote">Quantas pessoas ficaram em cada faixa de acertos. Quanto mais barras azuis à direita, melhor o resultado da turma.</p>'+repLeg()+chVbar(D.bands)+'</section>';}
- if(D.hard.length)h+='<section class="rsec"><h2>'+(E?4:2)+'. Mensagens com mais erros</h2><p class="rnote">As cinco mensagens que mais confundiram a turma, considerando todas as respostas.</p>'+chErr(D.hard)+'</section>';
- const k=E?5:(D.hard.length?3:2);
- h+='<section class="rsec"><h2>'+k+'. Recomendações</h2><ul>'+recs.map(w=>'<li><b>'+w.c.l+' ('+w.v+'% de acertos):</b> '+RECS[w.c.k]+'</li>').join('')+'<li>Repetir o treinamento em cerca de 3 meses, com mensagens novas, para medir se o aprendizado se mantém.</li>'+(n&&SESS.esperadas&&SESS.esperadas>n?'<li>'+(SESS.esperadas-n)+' das '+SESS.esperadas+' pessoas esperadas não participaram. Recomenda-se uma nova turma para elas.</li>':'')+'</ul></section>'
- +'<section class="rsec"><h2>'+(k+1)+'. Resultado por participante</h2><div class="tw">'+(rows.length?tb:'<p>Sem participantes.</p>')+'</div></section>'
- +'<section class="rsec"><h2>'+(k+2)+'. Metodologia</h2><p class="rnote">Cada participante avaliou 22 mensagens simuladas (e-mail, Microsoft Teams e pop-ups), divididas em duas fases de 11, com mensagens diferentes em cada fase. A fase 1 foi feita antes da apresentação e a fase 2 depois. A ordem dos dois conjuntos de mensagens foi alternada entre os participantes, para que a diferença de dificuldade entre eles não distorça a comparação. Depois de cada resposta, o jogo explica os sinais do golpe; por isso, a evolução reflete o treinamento como um todo.'+(D.late?' '+D.late+(D.late===1?' pessoa terminou':' pessoas terminaram')+' a fase 1 depois do início da apresentação e '+(D.late===1?'ficou':'ficaram')+' fora do comparativo.':'')+' p.p. = pontos percentuais.</p></section>'
+ +'<section class="rsec"><h2>'+(++SN)+'. Resumo executivo</h2>'+(E?'<div class="rk"><div><b>'+D.p1+'%</b><span>acertos antes da apresentação</span></div><div><b>'+D.p2+'%</b><span>acertos depois da apresentação</span></div><div style="border-left-color:'+(D.dl>=0?'#15803d':'#b91c1c')+'"><b>'+sg(D.dl)+' p.p.</b><span>evolução da turma</span></div><div><b>'+pct(D.up,E)+'%</b><span>das pessoas melhoraram</span></div></div>':'')+ex+'</section>';
+ if(ESP.length){const pr=partRows().filter(x=>x.g!=='f'),cd=pr.filter(x=>x.g==='d').length,ca=pr.filter(x=>x.g==='a').length,cn=pr.filter(x=>x.g==='n').length,ss={};pr.forEach(x=>{const k=x.setor||'Sem setor',o=ss[k]=ss[k]||{t:0,d:0};o.t++;if(x.g==='d')o.d++;});
+  const sr=Object.keys(ss).sort((x,y)=>x.localeCompare(y,'pt-BR')).map(k=>({l:k,v:pct(ss[k].d,ss[k].t),n:ss[k].t,tag:ss[k].d+' de '+ss[k].t+' concluíram'}));
+  h+='<section class="rsec"><h2>'+(++SN)+'. Adesão</h2><div class="rk"><div><b>'+pr.length+'</b><span>pessoas esperadas</span></div><div><b>'+(cd+ca)+'</b><span>participaram</span></div><div><b>'+cd+'</b><span>concluíram</span></div><div style="border-left-color:'+(pct(cd,pr.length)>=80?'#15803d':'#d97706')+'"><b>'+pct(cd,pr.length)+'%</b><span>de adesão (concluíram)</span></div></div><p>'+(cn?cn+(cn===1?' pessoa esperada não entrou':' pessoas esperadas não entraram')+' no treinamento'+(ca?' e '+ca+(ca===1?' começou mas não concluiu':' começaram mas não concluíram'):'')+'. Recomenda-se um lembrete ou uma nova turma para elas.':'Todas as pessoas esperadas entraram no treinamento.')+'</p>'+(sr.length>1||(sr[0]&&sr[0].l!=='Sem setor')?'<p class="rnote">Percentual de pessoas que concluíram, por setor.</p>'+chAd(sr):'')+'</section>';}
+ if(E){h+='<section class="rsec"><h2>'+(++SN)+'. Acertos por tipo de mensagem</h2><p class="rnote">Percentual de respostas corretas em cada tipo de mensagem simulada, antes e depois da apresentação.</p>'+repLeg()+chHbar([{l:'Geral',a:D.p1,b:D.p2,bold:1}].concat(D.cats))+'</section>'
+  +'<section class="rsec"><h2>'+(++SN)+'. Distribuição dos participantes</h2><p class="rnote">Quantas pessoas ficaram em cada faixa de acertos. Quanto mais barras azuis à direita, melhor o resultado da turma.</p>'+repLeg()+chVbar(D.bands)+'</section>';}
+ if(D.hard.length)h+='<section class="rsec"><h2>'+(++SN)+'. Mensagens com mais erros</h2><p class="rnote">As cinco mensagens que mais confundiram a turma, considerando todas as respostas.</p>'+chErr(D.hard)+'</section>';
+ h+='<section class="rsec"><h2>'+(++SN)+'. Recomendações</h2><ul>'+recs.map(w=>'<li><b>'+w.c.l+' ('+w.v+'% de acertos):</b> '+RECS[w.c.k]+'</li>').join('')+'<li>Repetir o treinamento em cerca de 3 meses, com mensagens novas, para medir se o aprendizado se mantém.</li>'+(!ESP.length&&n&&SESS.esperadas&&SESS.esperadas>n?'<li>'+(SESS.esperadas-n)+' das '+SESS.esperadas+' pessoas esperadas não participaram. Recomenda-se uma nova turma para elas.</li>':'')+'</ul></section>'
+ +'<section class="rsec"><h2>'+(++SN)+'. Resultado por participante</h2><div class="tw">'+(rows.length?tb:'<p>Sem participantes.</p>')+'</div></section>'
+ +'<section class="rsec"><h2>'+(++SN)+'. Metodologia</h2><p class="rnote">Cada participante avaliou 22 mensagens simuladas (e-mail, Microsoft Teams e pop-ups), divididas em duas fases de 11, com mensagens diferentes em cada fase. A fase 1 foi feita antes da apresentação e a fase 2 depois. A ordem dos dois conjuntos de mensagens foi alternada entre os participantes, para que a diferença de dificuldade entre eles não distorça a comparação. Depois de cada resposta, o jogo explica os sinais do golpe; por isso, a evolução reflete o treinamento como um todo.'+(D.late?' '+D.late+(D.late===1?' pessoa terminou':' pessoas terminaram')+' a fase 1 depois do início da apresentação e '+(D.late===1?'ficou':'ficaram')+' fora do comparativo.':'')+' p.p. = pontos percentuais.</p></section>'
  +'<div class="rft"><span>Clique Seguro · Treinamento de conscientização em segurança digital</span><span>'+esc(emp)+' · '+when+'</span></div>';
  let r=document.getElementById('rep');if(!r){r=document.createElement('div');r.id='rep';document.body.appendChild(r);}
  r.innerHTML='<div class="rbar"><button class="b" id="rPdf">Baixar PDF</button><button class="b neu" id="rClose">Fechar</button><small>Na janela que abrir, escolha <b>Salvar como PDF</b> em "Destino".</small></div><div class="rpage">'+h+'</div>';
  r.hidden=false;r.scrollTop=0;r.dataset.t='Relatorio Clique Seguro - '+emp+' - '+when.replace(/[\/:]/g,'-');
 }
 function repPdf(){const r=$('#rep'),t=document.title;document.title=r.dataset.t||t;window.print();setTimeout(()=>{document.title=t;},800);}
+/* ---- Participantes esperados (lista do AD) ---- */
+const FZR={d:4,'2':3,w:2,'1':1,o:0};
+function dedupe(a){const m={},out=[];a.forEach(p=>{const e=(p.email||'').toLowerCase();if(!e){out.push(p);return;}const q=m[e];if(!q||FZR[fz(p)]>FZR[fz(q)]||(FZR[fz(p)]===FZR[fz(q)]&&(p.t||0)>(q.t||0)))m[e]=p;});return out.concat(Object.values(m));}
+function demoEsp(d){const s=['Financeiro','RH','Comercial','Operações'];return d.map((p,i)=>({nome:p.nome+' Souza',email:p.email,setor:s[i%4]})).concat([['Otávio','Comercial'],['Paula','RH'],['Rafael','Operações']].map(x=>({nome:x[0]+' Lima',email:x[0].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')+'@empresa.com.br',setor:x[1]})));}
+const PSTL={d:'Concluiu','2':'Na fase 2',w:'Aguardando fase 2','1':'Na fase 1',o:'Não entrou',n:'Não entrou'};
+function partRows(){
+ const by={};LASTP.forEach(p=>{if(p.email)by[p.email.toLowerCase()]=p;});
+ const r=ESP.map(e=>{const p=by[e.email],z=p?fz(p):'n',g=z==='d'?'d':(z==='n'||z==='o')?'n':'a';return{nome:e.nome,email:e.email,setor:e.setor||'',z:z==='o'?'n':z,g:g,p:p};});
+ const es={};ESP.forEach(e=>es[e.email]=1);
+ LASTP.filter(p=>p.email&&!es[p.email.toLowerCase()]).forEach(p=>r.push({nome:p.nome,email:p.email,setor:'',z:fz(p),g:'f',p:p}));
+ return r;
+}
+function renderPart(){
+ const has=ESP.length>0,r=partRows(),c={n:0,a:0,d:0,f:0};r.forEach(x=>c[x.g]++);
+ $('#pStats').innerHTML=has?[[ESP.length,'esperados'],[c.d,'concluíram'],[c.a,'em andamento'],[c.n,'não entraram']].map(t=>'<div class="dtile"><b>'+t[0]+'</b><span>'+t[1]+'</span></div>').join(''):'';
+ $('#pNote').textContent=has?(c.f?c.f+(c.f===1?' pessoa entrou com e-mail fora da lista.':' pessoas entraram com e-mail fora da lista.'):'')+(SESS.pedeEmail===false?' Esta turma não pede e-mail, então não dá para cruzar os jogadores com a lista.':''):'Importe a lista de pessoas esperadas (exportada do AD pela TI) para ver quem ainda não entrou.';
+ ['pFil','pSet','pCopy','pCsv'].forEach(i=>{$('#'+i).hidden=!has;});
+ const sets=[...new Set(ESP.map(e=>e.setor).filter(Boolean))].sort((x,y)=>x.localeCompare(y,'pt-BR'));
+ const ps=$('#pSet');if(document.activeElement!==ps){ps.innerHTML='<option value="">Todos os setores</option>'+sets.map(x=>'<option'+(x===PSET?' selected':'')+'>'+esc(x)+'</option>').join('');ps.hidden=!has||!sets.length;}
+ const v=r.filter(x=>(PFIL==='all'||x.g===PFIL)&&(!PSET||x.setor===PSET)).sort((x,y)=>'nadf'.indexOf(x.g)-'nadf'.indexOf(y.g)||String(x.nome).localeCompare(String(y.nome),'pt-BR'));
+ $('#pTab').innerHTML=has&&v.length?'<thead><tr><th>Pessoa</th><th>Setor</th><th>Situação</th></tr></thead><tbody>'+v.map(x=>'<tr><td>'+esc(x.nome||'?')+'<small>'+esc(x.email)+'</small></td><td>'+esc(x.setor||'–')+'</td><td><span class="st '+x.g+'">'+(x.g==='f'?'Fora da lista · ':'')+PSTL[x.z]+'</span></td></tr>').join('')+'</tbody>':(has?'<tbody><tr><td>Ninguém neste filtro.</td></tr></tbody>':'');
+}
+function pendentes(){return partRows().filter(x=>(x.g==='n'||x.g==='a')&&(!PSET||x.setor===PSET));}
+function parseList(t){
+ const L=String(t||'').replace(/^﻿/,'').replace(/\r/g,'').split('\n').map(l=>l.trim()).filter(Boolean),out=[],seen={};let bad=0,dup=0,ix=null;
+ const ok=e=>/^[a-z0-9._%+'-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(e);
+ ESP.forEach(e=>seen[e.email]=1);
+ L.forEach((l,i)=>{const sp=l.indexOf('\t')>=0?'\t':l.indexOf(';')>=0?';':',',c=l.split(sp).map(x=>x.trim().replace(/^"|"$/g,'').trim());
+  if(i===0&&!c.some(x=>x.indexOf('@')>0)){const f=re=>c.findIndex(x=>re.test(x.toLowerCase()));ix={n:f(/nome|name/),e:f(/mail/),s:f(/setor|depart|área|area|sector/)};return;}
+  let e=(ix&&ix.e>=0?c[ix.e]:c.find(x=>x.indexOf('@')>0))||'';e=e.toLowerCase().replace(/^mailto:/,'').trim();
+  if(!ok(e)){bad++;return;}if(seen[e]){dup++;return;}seen[e]=1;
+  const rest=c.filter(x=>x&&x.toLowerCase()!==e);
+  const n=(ix&&ix.n>=0?c[ix.n]:rest[0])||e.split('@')[0],st=(ix&&ix.s>=0?c[ix.s]:rest[1])||'';
+  out.push({nome:n.slice(0,60),email:e.slice(0,120),setor:st.slice(0,40)});});
+ return{out:out.slice(0,1000),bad:bad,dup:dup,over:Math.max(0,out.length-1000)};
+}
+function saveList(){
+ const r=parseList($('#pTxt').value),m=$('#pMsg');
+ if(!r.out.length){m.textContent='Nenhum e-mail novo e válido encontrado.'+(r.dup?' '+r.dup+' já estavam na lista.':'')+(r.bad?' '+r.bad+' linhas sem e-mail válido.':'');return;}
+ const fin=()=>{m.textContent=r.out.length+' pessoas adicionadas.'+(r.dup?' '+r.dup+' repetidas ignoradas.':'')+(r.bad?' '+r.bad+' linhas sem e-mail válido.':'')+(r.over?' Limite de 1000 por vez.':'');$('#pTxt').value='';};
+ if(CURSID==='demo'){ESP=ESP.concat(r.out);renderDash(LASTP);fin();return;}
+ m.textContent='Salvando...';
+ dbp.then(db=>{if(!db){m.textContent='Sem conexão com o Firebase.';return;}const col=db.collection('cs_sessions').doc(CURSID).collection('esperados');
+  Promise.all(r.out.map(x=>col.doc(x.email).set(x))).then(fin).catch(()=>{m.textContent='Não foi possível salvar. Verifique a conexão e se as regras novas do Firestore foram publicadas.';});});
+}
+function copyPend(){
+ const l=pendentes().map(x=>x.email),b=$('#pCopy');if(!l.length){b.textContent='Ninguém pendente';setTimeout(()=>b.textContent='Copiar e-mails dos pendentes',2200);return;}
+ const t=l.join('; '),done=()=>{b.textContent=l.length+' e-mails copiados';setTimeout(()=>b.textContent='Copiar e-mails dos pendentes',2600);};
+ const fb=()=>{$('#pImp').hidden=false;$('#pTxt').value=t;$('#pTxt').select();$('#pMsg').textContent='Copie os e-mails acima (Ctrl+C) e cole no campo Cco do Outlook. Não clique em Salvar lista.';};
+ try{navigator.clipboard.writeText(t).then(done,fb);}catch(e){fb();}
+}
+function csvDown(rows,name){const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove();}catch(e){}}
+function pendCsv(){csvDown([['Nome','E-mail','Setor','Situação']].concat(pendentes().map(x=>[x.nome,x.email,x.setor,PSTL[x.z]])),'pendentes-clique-seguro.csv');}
 function dashCsv(){
- const rows=[['Nome','Ordem dos conjuntos','Fase 1 acertos','Fase 1 total','Fase 1 %','Fase 2 acertos','Fase 2 total','Fase 2 %','Evolução (p.p.)','Tardio','Pontos','Melhor sequência','Concluiu']].concat(LASTP.slice().sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR')).map(p=>{const z=fz(p),f1=z!=='1'&&z!=='o',f2=z==='d';return[p.nome,p.ordem||'',f1?p.f1h:'',f1?p.f1t:'',f1?pct(p.f1h,p.f1t):'',f2?p.f2h:'',f2?p.f2t:'',f2?pct(p.f2h,p.f2t):'',f2&&f1?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):'',tardio(p)?'sim':'não',p.score,p.best,z==='d'?'sim':'não'];}));
+ const ES={};ESP.forEach(e=>ES[e.email]=e.setor||'');const rows=[['Nome','E-mail','Setor','Ordem dos conjuntos','Fase 1 acertos','Fase 1 total','Fase 1 %','Fase 2 acertos','Fase 2 total','Fase 2 %','Evolução (p.p.)','Tardio','Pontos','Melhor sequência','Concluiu']].concat(LASTP.slice().sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR')).map(p=>{const z=fz(p),f1=z!=='1'&&z!=='o',f2=z==='d';return[p.nome,p.email||'',p.email?ES[p.email.toLowerCase()]||'':'',p.ordem||'',f1?p.f1h:'',f1?p.f1t:'',f1?pct(p.f1h,p.f1t):'',f2?p.f2h:'',f2?p.f2t:'',f2?pct(p.f2h,p.f2t):'',f2&&f1?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):'',tardio(p)?'sim':'não',p.score,p.best,z==='d'?'sim':'não'];}));
  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='painel-clique-seguro.csv';document.body.appendChild(a);a.click();a.remove();}catch(e){}
 }
@@ -856,6 +927,7 @@ $('#inNome').addEventListener('input',hint);
 $('#inDom').addEventListener('input',hint);
 $('#inPlayer').addEventListener('input',()=>{$('#nameErr').hidden=true;});
 $('#inPlayer').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
+$('#inEmail').addEventListener('input',()=>{$('#emErr').hidden=true;});$('#inEmail').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
 addEventListener('hashchange',()=>{const c=fromHash();if(!c)return;if(c.dash){BACKTO='setup';openDash(c.dash);}else if($('#desk').hidden)splash(c);});
 try{const l=JSON.parse(localStorage.getItem('cs_last')||'null');if(l&&l.sid){const h=histGet();if(!h.some(x=>x.sid===l.sid)){h.push({sid:l.sid,n:l.n,t:0});histSet(h);}localStorage.removeItem('cs_last');}}catch(e){}
 updHistBtn();
@@ -988,11 +1060,11 @@ function dec(id,c,ev){
 }
 function setPhl(){$('#phl').textContent='Fase '+(PH===2?2:1)+'/2';}
 const PK=()=>'cs_p_'+SID;
-function saveP(){if(!SID)return;try{const r={};Object.keys(S.res).forEach(k=>r[k]=S.res[k].ok?1:0);sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,ord:ORD,f1:F1,score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
+function saveP(){if(!SID)return;try{const r={};Object.keys(S.res).forEach(k=>r[k]=S.res[k].ok?1:0);sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,em:PEMAIL,ord:ORD,f1:F1,score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
 function loadP(){try{return JSON.parse(sessionStorage.getItem(PK())||'null');}catch(e){return null;}}
 function clearP(){try{sessionStorage.removeItem(PK());}catch(e){}}
 function afterSplash(){const p=SID&&loadP();if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');}
-function restoreWait(p){PID=p.pid;PNAME=p.name;ORD=p.ord;PH='w';F1=p.f1;init();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield;S.time=p.time||540;Object.keys(p.res||{}).forEach(k=>{S.res[k]={ok:!!p.res[k],choice:'',pts:0,st:0};});openWait();}
+function restoreWait(p){PID=p.pid;PNAME=p.name;PEMAIL=p.em||'';ORD=p.ord;PH='w';F1=p.f1;init();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield;S.time=p.time||540;Object.keys(p.res||{}).forEach(k=>{S.res[k]={ok:!!p.res[k],choice:'',pts:0,st:0};});openWait();}
 function setRel(v){
  if(RELEASED===v&&v)return;RELEASED=v;
  $('#wMsg').hidden=v;$('#wRel').hidden=!v;$('#go2').hidden=!v;$('#chk2').hidden=v;
@@ -1081,6 +1153,7 @@ document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
  if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
+ PEMAIL='';if(PE){const u=($('#inEmail').value||'').trim().toLowerCase().replace(/@.*$/,'');if(!/^[a-z0-9._-]{1,64}$/.test(u)){$('#emErr').hidden=false;$('#inEmail').focus();return;}PEMAIL=u+'@'+DOM;}
  PNAME=nm;begin();}
 function begin(){
  PID=rid(10);LAST={};PH=1;F1=null;ORD=PID.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%2?'AB':'BA';
@@ -1106,6 +1179,11 @@ document.addEventListener('click',e=>{
  if(e.target.id==='dBack'){return BACKTO==='hist'?openHist():show(BACKTO);}
  if(e.target.id==='dCsv')return dashCsv();
  if(e.target.id==='dPdf')return openRep();
+ if(e.target.id==='pImpB'){$('#pImp').hidden=!$('#pImp').hidden;$('#pMsg').textContent='';return;}
+ if(e.target.id==='pCancel'){$('#pImp').hidden=true;return;}
+ if(e.target.id==='pSave')return saveList();
+ if(e.target.id==='pCopy')return copyPend();
+ if(e.target.id==='pCsv')return pendCsv();
  if(e.target.id==='rPdf')return repPdf();
  if(e.target.id==='rClose'){$('#rep').hidden=true;return;}
  if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
@@ -1136,7 +1214,7 @@ function stat(u,click){
  const m=u.match(/^(https?:\/\/)([^\/]+)(.*)$/);
  s.hidden=false;s.innerHTML='Este link leva para: <code>'+m[1]+'<b>'+m[2]+'</b>'+m[3]+'</code>'+(click?'<br><small>Aqui o link não abre. No dia a dia, só passe o mouse para ler o endereço.</small>':'');if(click)stat.t=setTimeout(()=>stat(null),4500);
 }
-document.addEventListener('change',e=>{if(e.target.id==='cExp'){const v=Math.max(0,Math.min(5000,parseInt(e.target.value,10)||0));SESS.esperadas=v;fbUpd({esperadas:v});renderCtl();}});
+document.addEventListener('change',e=>{if(e.target.id==='pFil'){PFIL=e.target.value;renderPart();return;}if(e.target.id==='pSet'){PSET=e.target.value;renderPart();return;}if(e.target.id==='pFile'&&e.target.files[0]){const f=new FileReader();f.onload=()=>{$('#pTxt').value=String(f.result||'');};f.readAsText(e.target.files[0]);return;}if(e.target.id==='cExp'){const v=Math.max(0,Math.min(5000,parseInt(e.target.value,10)||0));SESS.esperadas=v;fbUpd({esperadas:v});renderCtl();}});
 document.addEventListener('mouseover',e=>{const l=e.target.closest('.lnk');if(l)stat(l.dataset.url);});
 document.addEventListener('mouseout',e=>{if(e.target.closest('.lnk'))stat(null);});
 </script>
