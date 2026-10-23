@@ -283,8 +283,8 @@ mark{background:none;color:inherit}
    <section class="dcard" id="dCmp"><h3>Antes x depois</h3><div class="dstats" id="dCmpS"></div><p class="mini" id="dCmpN"></p><div class="tbw"><table id="dTab"></table></div></section>
    <section class="dcard" id="dPart"><h3>Participantes esperados</h3>
     <div class="dstats" id="pStats"></div><p class="mini" id="pNote"></p>
-    <div class="crow" id="pTools"><select id="pFil" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="n">Não entraram</option><option value="a">Em andamento</option><option value="d">Concluíram</option><option value="f">Fora da lista</option></select><select id="pSet" aria-label="Filtrar por setor"></select><button class="b neu" id="pCopy">Copiar e-mails dos pendentes</button><button class="b neu" id="pCsv">Baixar pendentes</button><button class="b ghost" id="pImpB">Importar lista</button></div>
-    <div id="pImp" hidden><p class="mini">Cole a lista exportada do AD ou do Excel, uma pessoa por linha: <b>Nome; E-mail; Setor</b>. Também aceita vírgula ou colunas copiadas do Excel. Ou escolha um arquivo .csv.</p><textarea id="pTxt" placeholder="Maria Silva;maria.silva@empresa.com.br;Financeiro"></textarea><div class="crow"><input type="file" id="pFile" accept=".csv,.txt,text/csv"><button class="b" id="pSave">Salvar lista</button><button class="b ghost" id="pCancel">Cancelar</button></div><p class="mini" id="pMsg"></p></div>
+    <div class="crow" id="pTools"><select id="pFil" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="n">Não entraram</option><option value="a">Em andamento</option><option value="d">Concluíram</option><option value="f">Fora da lista</option></select><select id="pSet" aria-label="Filtrar por setor"></select><button class="b neu" id="pCopy">Copiar e-mails dos pendentes</button><button class="b neu" id="pCsv">Baixar pendentes</button><button class="b ghost" id="pImpB">Importar lista</button><button class="b ghost" id="pMod">Baixar modelo</button></div>
+    <div id="pImp" hidden><p class="mini">Cole a lista exportada do AD ou do Excel, uma pessoa por linha: <b>Nome; E-mail; Setor</b>. Também aceita vírgula ou colunas copiadas do Excel. Ou escolha um arquivo .csv, de preferência no <b>modelo</b> (botão Baixar modelo): abra no Excel, troque os exemplos pelas pessoas da turma e salve como CSV.</p><textarea id="pTxt" placeholder="Maria Silva;maria.silva@empresa.com.br;Financeiro"></textarea><div class="crow"><input type="file" id="pFile" accept=".csv,.txt,text/csv"><button class="b" id="pSave">Salvar lista</button><button class="b ghost" id="pCancel">Cancelar</button></div><p class="mini" id="pMsg"></p></div>
     <div class="tbw"><table id="pTab"></table></div></section>
    <div class="dgrid"><section class="dcard"><h3>Ranking</h3><ol id="dRank"></ol></section><section class="dcard"><h3>Onde mais erraram</h3><ol id="dHard"></ol></section></div>
    <div class="dgrid"><section class="dcard"><h3>Por tipo de mensagem</h3><ol id="dCat"></ol></section><section class="dcard"><h3>Ainda na fase 1</h3><ol id="dF1"></ol></section></div>
@@ -869,6 +869,7 @@ function parseList(t){
  L.forEach((l,i)=>{const sp=l.indexOf('\t')>=0?'\t':l.indexOf(';')>=0?';':',',c=l.split(sp).map(x=>x.trim().replace(/^"|"$/g,'').trim());
   if(i===0&&!c.some(x=>x.indexOf('@')>0)){const f=re=>c.findIndex(x=>re.test(x.toLowerCase()));ix={n:f(/nome|name/),e:f(/mail/),s:f(/setor|depart|área|area|sector/)};return;}
   let e=(ix&&ix.e>=0?c[ix.e]:c.find(x=>x.indexOf('@')>0))||'';e=e.toLowerCase().replace(/^mailto:/,'').trim();
+  if(/@exemplo\.com\.br$/.test(e))return;
   if(!ok(e)){bad++;return;}if(seen[e]){dup++;return;}seen[e]=1;
   const rest=c.filter(x=>x&&x.toLowerCase()!==e);
   const n=(ix&&ix.n>=0?c[ix.n]:rest[0])||e.split('@')[0],st=(ix&&ix.s>=0?c[ix.s]:rest[1])||'';
@@ -878,7 +879,7 @@ function parseList(t){
 function saveList(){
  const r=parseList($('#pTxt').value),m=$('#pMsg');
  if(!r.out.length){m.textContent='Nenhum e-mail novo e válido encontrado.'+(r.dup?' '+r.dup+' já estavam na lista.':'')+(r.bad?' '+r.bad+' linhas sem e-mail válido.':'');return;}
- const fin=()=>{m.textContent=r.out.length+' pessoas adicionadas.'+(r.dup?' '+r.dup+' repetidas ignoradas.':'')+(r.bad?' '+r.bad+' linhas sem e-mail válido.':'')+(r.over?' Limite de 1000 por vez.':'');$('#pTxt').value='';};
+ const fin=()=>{m.textContent=r.out.length+(r.out.length===1?' pessoa adicionada.':' pessoas adicionadas.')+(r.dup?' '+r.dup+' repetidas ignoradas.':'')+(r.bad?' '+r.bad+' linhas sem e-mail válido.':'')+(r.over?' Limite de 1000 por vez.':'');$('#pTxt').value='';};
  if(CURSID==='demo'){ESP=ESP.concat(r.out);renderDash(LASTP);fin();return;}
  m.textContent='Salvando...';
  dbp.then(db=>{if(!db){m.textContent='Sem conexão com o Firebase.';return;}const col=db.collection('cs_sessions').doc(CURSID).collection('esperados');
@@ -891,6 +892,7 @@ function copyPend(){
  try{navigator.clipboard.writeText(t).then(done,fb);}catch(e){fb();}
 }
 function csvDown(rows,name){const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove();}catch(e){}}
+function modCsv(){csvDown([['Nome','E-mail','Setor'],['Maria Silva','maria.silva@exemplo.com.br','Financeiro'],['João Souza','joao.souza@exemplo.com.br','RH']],'modelo-participantes-clique-seguro.csv');}
 function pendCsv(){csvDown([['Nome','E-mail','Setor','Situação']].concat(pendentes().map(x=>[x.nome,x.email,x.setor,PSTL[x.z]])),'pendentes-clique-seguro.csv');}
 function dashCsv(){
  const ES={};ESP.forEach(e=>ES[e.email]=e.setor||'');const rows=[['Nome','E-mail','Setor','Ordem dos conjuntos','Fase 1 acertos','Fase 1 total','Fase 1 %','Fase 2 acertos','Fase 2 total','Fase 2 %','Evolução (p.p.)','Tardio','Pontos','Melhor sequência','Concluiu']].concat(LASTP.slice().sort((x,y)=>String(x.nome).localeCompare(String(y.nome),'pt-BR')).map(p=>{const z=fz(p),f1=z!=='1'&&z!=='o',f2=z==='d';return[p.nome,p.email||'',p.email?ES[p.email.toLowerCase()]||'':'',p.ordem||'',f1?p.f1h:'',f1?p.f1t:'',f1?pct(p.f1h,p.f1t):'',f2?p.f2h:'',f2?p.f2t:'',f2?pct(p.f2h,p.f2t):'',f2&&f1?pct(p.f2h,p.f2t)-pct(p.f1h,p.f1t):'',tardio(p)?'sim':'não',p.score,p.best,z==='d'?'sim':'não'];}));
@@ -1190,6 +1192,7 @@ document.addEventListener('click',e=>{
  if(e.target.id==='pSave')return saveList();
  if(e.target.id==='pCopy')return copyPend();
  if(e.target.id==='pCsv')return pendCsv();
+ if(e.target.id==='pMod')return modCsv();
  if(e.target.id==='rPdf')return repPdf();
  if(e.target.id==='rClose'){$('#rep').hidden=true;return;}
  if(e.target.id==='certBtn'){makeCert().then(u=>{$('#certImg').src=u;$('#certDl').href=u;show('cert');});return;}
@@ -1220,7 +1223,7 @@ function stat(u,click){
  const m=u.match(/^(https?:\/\/)([^\/]+)(.*)$/);
  s.hidden=false;s.innerHTML='Este link leva para: <code>'+m[1]+'<b>'+m[2]+'</b>'+m[3]+'</code>'+(click?'<br><small>Aqui o link não abre. No dia a dia, só passe o mouse para ler o endereço.</small>':'');if(click)stat.t=setTimeout(()=>stat(null),4500);
 }
-document.addEventListener('change',e=>{if(e.target.id==='pFil'){PFIL=e.target.value;renderPart();return;}if(e.target.id==='pSet'){PSET=e.target.value;renderPart();return;}if(e.target.id==='pFile'&&e.target.files[0]){const f=new FileReader();f.onload=()=>{$('#pTxt').value=String(f.result||'');};f.readAsText(e.target.files[0]);return;}if(e.target.id==='cExp'){const v=Math.max(0,Math.min(5000,parseInt(e.target.value,10)||0));SESS.esperadas=v;fbUpd({esperadas:v});renderCtl();}});
+document.addEventListener('change',e=>{if(e.target.id==='pFil'){PFIL=e.target.value;renderPart();return;}if(e.target.id==='pSet'){PSET=e.target.value;renderPart();return;}if(e.target.id==='pFile'&&e.target.files[0]){const f=new FileReader();f.onload=()=>{const u=new Uint8Array(f.result);let t;try{t=new TextDecoder('utf-8',{fatal:true}).decode(u);}catch(x){t=new TextDecoder('windows-1252').decode(u);}$('#pTxt').value=t;$('#pMsg').textContent='Arquivo carregado. Confira e clique em Salvar lista.';};f.readAsArrayBuffer(e.target.files[0]);return;}if(e.target.id==='cExp'){const v=Math.max(0,Math.min(5000,parseInt(e.target.value,10)||0));SESS.esperadas=v;fbUpd({esperadas:v});renderCtl();}});
 document.addEventListener('mouseover',e=>{const l=e.target.closest('.lnk');if(l)stat(l.dataset.url);});
 document.addEventListener('mouseout',e=>{if(e.target.closest('.lnk'))stat(null);});
 </script>
