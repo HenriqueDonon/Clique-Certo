@@ -1112,7 +1112,7 @@ function dec(id,c,ev){
  const ok=(c==='stop')===x.phish;let pts=0;
  if(ok){S.streak++;S.best=Math.max(S.best,S.streak);pts=Math.max(50,100+25*Math.min(S.streak,8));S.score+=pts;}
  else{S.streak=0;S.shield-=x.phish?12:4;}
- S.res[id]={choice:c,ok,pts,st:S.streak};sendProgress(false);
+ S.res[id]={choice:c,ok,pts,st:S.streak};sendProgress(false);saveP();
  setShield();updHud();
  if(x.app==='popup')showPop(x);else render();
  const px=(ev&&ev.clientX)||innerWidth/2,py=(ev&&ev.clientY)||innerHeight/2;
@@ -1121,11 +1121,14 @@ function dec(id,c,ev){
 }
 function setPhl(){$('#phl').textContent='Fase '+(PH===2?2:1)+'/2';}
 const PK=()=>'cs_p_'+SID;
-function saveP(){if(!SID)return;try{const r={};Object.keys(S.res).forEach(k=>r[k]=S.res[k].ok?1:0);sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,em:PEMAIL,ord:ORD,f1:F1,score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
+function saveP(){if(!SID||!PID)return;try{const r={};Object.keys(S.res).forEach(k=>{const o=S.res[k];r[k]={ok:o.ok?1:0,c:o.choice||'',p:o.pts||0,s:o.st||0};});sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,em:PEMAIL,ord:ORD,ph:PH,f1:F1,order:S.order,set:S.set,streak:S.streak||0,at:S.at||{},score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
 function loadP(){try{return JSON.parse(sessionStorage.getItem(PK())||'null');}catch(e){return null;}}
 function clearP(){try{sessionStorage.removeItem(PK());}catch(e){}}
-function afterSplash(){const p=SID&&loadP();if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');}
-function restoreWait(p){PID=p.pid;PNAME=p.name;PEMAIL=p.em||'';ORD=p.ord;PH='w';F1=p.f1;init();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield;S.time=p.time||540;Object.keys(p.res||{}).forEach(k=>{S.res[k]={ok:!!p.res[k],choice:'',pts:0,st:0};});openWait();}
+function afterSplash(){const p=SID&&loadP();if(p&&p.pid&&p.ord&&(p.ph===1||p.ph===2)){restoreMid(p);}else if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');}
+const rr=r=>typeof r==='object'&&r?{ok:!!r.ok,choice:r.c||'',pts:r.p||0,st:r.s||0}:{ok:!!r,choice:'',pts:0,st:0};
+function restoreMid(p){PID=p.pid;PNAME=p.name;PEMAIL=p.em||'';ORD=p.ord;PH=p.ph;F1=p.f1||null;LAST={};init();if(p.order&&p.order.length)S.order=p.order;S.set=(p.set&&p.set.length?p.set:S.order).slice();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield==null?100:p.shield;S.time=p.time||540;S.streak=p.streak||0;S.at=p.at||{};Object.keys(p.res||{}).forEach(k=>{S.res[k]=rr(p.res[k]);});S.arrived=S.set.filter(i=>S.res[i]);S.cur=S.arrived.length;
+ SCR.forEach(i=>{$('#'+i).hidden=true;});$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;sendProgress(false);ac();updHud();setPhl();setShield();clock();render();setTimeout(next,700);}
+function restoreWait(p){PID=p.pid;PNAME=p.name;PEMAIL=p.em||'';ORD=p.ord;PH='w';F1=p.f1;init();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield;S.time=p.time||540;Object.keys(p.res||{}).forEach(k=>{S.res[k]=rr(p.res[k]);});openWait();}
 function setRel(v){
  if(RELEASED===v&&v)return;RELEASED=v;
  $('#wMsg').hidden=v;$('#wRel').hidden=!v;$('#go2').hidden=!v;$('#chk2').hidden=v;
@@ -1160,7 +1163,7 @@ function endPhase1(){
 function startPhase2(){
  ac();if(WAIT_UNSUB){WAIT_UNSUB();WAIT_UNSUB=null;}
  PH=2;S.order=mkOrder(ORD[1]);S.set=S.order.slice();S.cur=0;S.arrived=[];S.pend=null;S.open=null;S.sel=null;S.det=false;S.lock=0;S.streak=0;
- sendProgress(false);
+ sendProgress(false);saveP();
  $('#wait').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;
  LAST={};setPhl();updHud();setShield();clock();render();setTimeout(next,700);
 }
@@ -1219,7 +1222,7 @@ function start(){
  PNAME=nm;begin();}
 function begin(){
  PID=rid(10);LAST={};PH=1;F1=null;ORD=PID.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%2?'AB':'BA';
- init();sendProgress(false);ac();updHud();setPhl();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
+ init();sendProgress(false);saveP();ac();updHud();setPhl();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
 
 document.addEventListener('click',e=>{
  if(e.target.id==='aNext')return aulaGo(1);
