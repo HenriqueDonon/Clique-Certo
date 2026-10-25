@@ -691,9 +691,9 @@ function demoPlayers(){let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;cons
   const k=i<9?'d':i===9?'dt':i<12?'p2':'p1';
   const f1h=run(ord[0],k==='p1'?6:12,1),f2h=k==='p1'?0:run(ord[1],k==='p2'?5:12,.55);
   return{nome:n,email:n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'@empresa.com.br',ordem:ord,fase:k==='p1'?'1':'2',score:sc,hits:f1h+f2h,answered:cnt,total:24,shield:100,best:best,done:k==='d'||k==='dt',answers:ans,f1h:f1h,f1t:12,f1fim:k==='p1'?null:(k==='dt'?T+120000:T-Math.floor(r()*900000)),f2h:f2h,f2t:12};});}
-function fbUpd(d){if(CURSID==='demo')return;dbp.then(db=>db&&db.collection('cs_sessions').doc(CURSID).update(d)).catch(()=>{});}
-function ctlAula(){if(SESS.aulaEm)return;SESS.aulaEm=Date.now();fbUpd({aulaEm:SESS.aulaEm});renderDash(LASTP);}
-function ctlRel(){if(SESS.fase2)return;if(!ARM){ARM=1;renderCtl();setTimeout(()=>{ARM=0;renderCtl();},4000);return;}ARM=0;const t=Date.now(),u={fase2:true,fase2Em:t};SESS.fase2=true;SESS.fase2Em=t;if(!SESS.aulaEm){SESS.aulaEm=t;u.aulaEm=t;}fbUpd(u);renderDash(LASTP);}
+function fbUpd(d,undo){if(CURSID==='demo')return;dbp.then(db=>db&&db.collection('cs_sessions').doc(CURSID).update(d)).catch(e=>{if(undo)undo();renderCtl();const n=$('#cNote');n.textContent='Não foi possível salvar ('+((e&&(e.code||e.message))||'erro')+'). Confira se as regras do Firestore foram publicadas e se você está logado como instrutor.';n.style.color='var(--bad)';setTimeout(()=>{n.style.color='';renderCtl();},12000);});}
+function ctlAula(){if(SESS.aulaEm)return;SESS.aulaEm=Date.now();fbUpd({aulaEm:SESS.aulaEm},()=>{SESS.aulaEm=0;});renderDash(LASTP);}
+function ctlRel(){if(SESS.fase2)return;if(!ARM){ARM=1;renderCtl();setTimeout(()=>{ARM=0;renderCtl();},4000);return;}ARM=0;const t=Date.now(),u={fase2:true,fase2Em:t};SESS.fase2=true;SESS.fase2Em=t;if(!SESS.aulaEm){SESS.aulaEm=t;u.aulaEm=t;}fbUpd(u,()=>{SESS.fase2=false;SESS.fase2Em=0;if(u.aulaEm)SESS.aulaEm=0;});renderDash(LASTP);}
 function renderCtl(){
  const a=LASTP,n=a.length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length,N=Math.max(n,ESP.length||SESS.esperadas||0),own=isOwner();
  $('#cReady').textContent=ready+' de '+N;$('#cBar').style.width=(N?Math.round(ready/N*100):0)+'%';
