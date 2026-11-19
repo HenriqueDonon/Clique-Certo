@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clique Seguro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@600;800&display=swap">
@@ -248,6 +253,7 @@ mark{background:none;color:inherit}
 .dash .b.ghost{color:#9fd4f5}
 .tbw{overflow-x:auto}#dTab{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}#dTab th{text-align:left;color:#9fd4f5;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #2b5d86}#dTab td{padding:8px;border-bottom:1px solid #ffffff14;white-space:nowrap}
 #dTab td{color:#e8f2fb}#dTab td:first-child{font-weight:700}
+#netErr{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:95;max-width:min(560px,calc(100% - 24px));background:#fde8e6;color:#7a1712;border:1px solid #f3b4ae;border-radius:10px;padding:10px 14px;font-weight:700;font-size:.92rem;box-shadow:0 6px 24px #0004}#netErr[hidden]{display:none}
 #rep{position:fixed;inset:0;z-index:80;background:#dfe5ec;overflow:auto;color:#1b2733;font-family:"Segoe UI",Roboto,Arial,Helvetica,sans-serif;font-variant-numeric:normal}#rep .rk b,#rep .rmeta b{font-family:"Segoe UI",Roboto,Arial,Helvetica,sans-serif!important;font-weight:800}#rep[hidden]{display:none}
 #rep .rbar{position:sticky;top:0;z-index:2;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0b2a52}#rep .rbar .b{min-width:150px}#rep .rbar small{width:100%;text-align:center;color:#9fd4f5}
 #rep .rpage{width:min(840px,calc(100% - 24px));margin:16px auto 40px;background:#fff;padding:36px 42px;box-shadow:0 6px 28px #0b2a5226;border-radius:6px}
@@ -278,13 +284,13 @@ mark{background:none;color:inherit}
    <div class="dmsg" id="dMsg"></div>
    <section class="dcard" id="dCtl"><h3>Controle da aula</h3>
     <div class="ctop"><div><b id="cReady">–</b> <span>prontos para a fase 2</span></div><div class="cbar"><i id="cBar"></i></div></div>
-    <div class="crow"><label id="cExpW" hidden>Pessoas esperadas <input id="cExp" type="number" min="0" max="5000" inputmode="numeric" placeholder="opcional"></label><button class="b neu" id="cAula" hidden>Iniciar aula</button><button class="b" id="cRel" hidden>Liberar fase 2</button><button class="b ghost" id="cOwn" hidden>Ativar controles neste aparelho</button></div>
+    <div class="crow"><label id="cExpW" hidden>Pessoas esperadas <input id="cExp" type="number" min="0" max="5000" inputmode="numeric" placeholder="opcional"></label><button class="b neu" id="cAula" hidden>Iniciar aula</button><button class="b" id="cRel" hidden>Liberar fase 2</button><button class="b ghost" id="cEnd" hidden>Encerrar turma</button><button class="b ghost" id="cOwn" hidden>Ativar controles neste aparelho</button></div>
     <p class="mini" id="cNote"></p></section>
    <div class="dstats" id="dStats"></div>
    <section class="dcard" id="dCmp"><h3>Antes x depois</h3><div class="dstats" id="dCmpS"></div><p class="mini" id="dCmpN"></p><div class="tbw"><table id="dTab"></table></div></section>
    <section class="dcard" id="dPart"><h3>Participantes esperados</h3>
     <div class="dstats" id="pStats"></div><p class="mini" id="pNote"></p>
-    <div class="crow" id="pTools"><select id="pFil" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="n">Não entraram</option><option value="a">Em andamento</option><option value="d">Concluíram</option><option value="f">Fora da lista</option></select><select id="pSet" aria-label="Filtrar por setor"></select><button class="b neu" id="pCopy">Copiar e-mails dos pendentes</button><button class="b neu" id="pCsv">Baixar pendentes</button><button class="b ghost" id="pImpB">Importar lista</button><button class="b ghost" id="pMod">Baixar modelo</button></div>
+    <div class="crow" id="pTools"><select id="pFil" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="n">Não entraram</option><option value="a">Em andamento</option><option value="d">Concluíram</option><option value="f">Fora da lista</option></select><select id="pSet" aria-label="Filtrar por setor"></select><button class="b neu" id="pCopy">Copiar e-mails dos pendentes</button><button class="b neu" id="pCsv">Baixar pendentes</button><button class="b ghost" id="pImpB">Importar lista</button><button class="b ghost" id="pMod">Baixar modelo</button><button class="b ghost" id="pRef">Atualizar lista</button></div>
     <div id="pImp" hidden><p class="mini">Cole a lista exportada do AD ou do Excel, uma pessoa por linha: <b>Nome; E-mail; Setor</b>. Também aceita vírgula ou colunas copiadas do Excel. Ou escolha um arquivo .csv, de preferência no <b>modelo</b> (botão Baixar modelo): abra no Excel, troque os exemplos pelas pessoas da turma e salve como CSV.</p><textarea id="pTxt" placeholder="Maria Silva;maria.silva@empresa.com.br;Financeiro"></textarea><div class="crow"><input type="file" id="pFile" accept=".csv,.txt,text/csv"><button class="b" id="pSave">Salvar lista</button><button class="b ghost" id="pCancel">Cancelar</button></div><p class="mini" id="pMsg"></p></div>
     <div class="tbw"><table id="pTab"></table></div></section>
    <div class="dgrid"><section class="dcard"><h3>Ranking</h3><ol id="dRank"></ol></section><section class="dcard"><h3>Onde mais erraram</h3><ol id="dHard"></ol></section></div>
@@ -568,18 +574,24 @@ function histSet(a){try{localStorage.setItem('cs_hist',JSON.stringify(a.slice(0,
 function histAdd(sid,n){const a=histGet().filter(x=>x.sid!==sid);a.unshift({sid:sid,n:n,t:Date.now()});histSet(a);}
 function updHistBtn(){$('#histBtn').textContent=needLogin()?'Relatórios salvos':'Relatórios salvos ('+histGet().length+')';}
 const fmtDT=t=>new Date(t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+let HP=1,HCNT={},HLIST=[];
+function histCount(db,sid){if(HCNT[sid]!=null)return Promise.resolve(HCNT[sid]);const c=db.collection('cs_sessions').doc(sid).collection('players');CSM.counts++;
+ return (c.count?c.count():c.get().then(q=>q.size)).then(n=>{HCNT[sid]=n;return n;});}
 function openHist(){
- show('hist');const cloud=needLogin();
+ show('hist');const cloud=needLogin();HP=1;
  const paint=a=>{
-  a=[{sid:'demo',n:'Exemplo para apresentações',t:Date.now()-86400000*9,demo:1}].concat(a);
-  $('#histList').innerHTML=a.length?a.map(x=>'<li><button class="hitem" data-sid="'+esc(x.sid)+'" data-n="'+esc(x.n)+'"><b>'+esc(x.n)+'</b><small>'+(x.demo?'Grupo Meridiano · dados fictícios · 30 jogadores':(x.t?fmtDT(x.t):'data não registrada')+' · <span data-cnt="'+esc(x.sid)+'">…</span>')+'</small></button>'+(cloud||x.demo?'':'<button class="hdel" data-del="'+esc(x.sid)+'" aria-label="Remover da lista">×</button>')+'</li>').join(''):'<li class="mini">Nenhum relatório ainda. Gere um QR Code para criar o primeiro.</li>';
-  dbp.then(db=>{a.slice(0,40).filter(x=>!x.demo).forEach(x=>{const el=()=>document.querySelector('[data-cnt="'+x.sid+'"]');if(!db){if(el())el().textContent='sem conexão';return;}
-   db.collection('cs_sessions').doc(x.sid).collection('players').get().then(q=>{if(el())el().textContent=q.size+(q.size===1?' jogador':' jogadores');}).catch(()=>{if(el())el().textContent='sem acesso';});});});
+  HLIST=a;const all=[{sid:'demo',n:'Exemplo para apresentações',t:Date.now()-86400000*9,demo:1}].concat(a),vis=all.slice(0,HP*20+1),more=all.length>vis.length;
+  $('#histList').innerHTML=vis.map(x=>'<li><button class="hitem" data-sid="'+esc(x.sid)+'" data-n="'+esc(x.n)+'"><b>'+esc(x.n)+'</b><small>'+(x.demo?'Grupo Meridiano · dados fictícios · 30 jogadores':(x.t?fmtDT(x.t):'data não registrada')+' · <span data-cnt="'+esc(x.sid)+'">…</span>')+'</small></button>'+(cloud||x.demo?'':'<button class="hdel" data-del="'+esc(x.sid)+'" aria-label="Remover da lista">×</button>')+'</li>').join('')+(more?'<li><button class="b neu" id="histMore" style="width:100%">Carregar mais turmas ('+(all.length-vis.length)+')</button></li>':'');
+  dbp.then(db=>{vis.filter(x=>!x.demo).forEach(x=>{const el=()=>document.querySelector('[data-cnt="'+x.sid+'"]');if(!db){if(el())el().textContent='sem conexão';return;}
+   histCount(db,x.sid).then(n=>{if(el())el().textContent=n+(n===1?' jogador':' jogadores');}).catch(()=>{if(el())el().textContent='sem acesso';});});});
  };
+ window.__histPaint=paint;
  if(!cloud){paint(histGet().sort((x,y)=>y.t-x.t));return;}
  paint([]);const L0=$('#histList');L0.insertAdjacentHTML('beforeend','<li class="mini" id="histLoad">Carregando suas turmas...</li>');
  dbp.then(db=>{if(!db){const l=$('#histLoad');if(l)l.textContent='Sem conexão com o servidor.';return;}
-  db.collection('cs_sessions').get().then(q=>{const a=[];q.forEach(d=>{const v=d.data()||{};a.push({sid:d.id,n:v.empresa||'Turma',t:v.criadoEm||0});});a.sort((x,y)=>y.t-x.t);paint(a.slice(0,60));}).catch(()=>{const l=$('#histLoad');if(l)l.textContent='Não foi possível carregar as turmas salvas.';});});
+  const u=AUTH&&AUTH.currentUser;if(!u){const l=$('#histLoad');if(l)l.textContent='Entre como instrutor para ver suas turmas.';return;}
+  const C=db.collection('cs_sessions');
+  Promise.all([C.where('donoUid','==',u.uid).get(),C.where('dono','==',u.email||'').get()]).then(rs=>{const m={};rs.forEach(q=>q.forEach(d=>{const v=d.data()||{};m[d.id]={sid:d.id,n:v.empresa||'Turma',t:v.criadoEm||0};}));const a=Object.keys(m).map(k=>m[k]).sort((x,y)=>y.t-x.t);paint(a);}).catch(e=>{const l=$('#histLoad');if(l)l.textContent='Não foi possível carregar as turmas: '+fsErr(e);});});
 }
 function readCfg(){const n=($('#inNome').value||'').replace(/\|/g,'').trim().slice(0,40);let d=cleanDom($('#inDom').value||'');if(n&&!d)d=(slug(n)||'empresa')+'.com.br';return{n:n,d:d,pe:!!($('#inPe')&&$('#inPe').checked)};}
 function hint(){const c=readCfg();$('#domHint').textContent=c.n?'E-mails de exemplo no jogo: nome@'+c.d:'';}
@@ -593,18 +605,51 @@ let AUTH=null,AUTHM=null,ADMIN=false,RESOLVER=null,ENR=null,AFTERLOGIN=null;
 const needLogin=()=>!!(FB.apiKey&&FB.projectId);
 function shim(M,fs){
  const snap=x=>({exists:x.exists(),id:x.id,data:()=>x.data()});
- const qsnap=q=>({size:q.size,forEach:fn=>q.forEach(x=>fn(snap(x)))});
+ const qsnap=q=>({size:q.size,forEach:fn=>q.forEach(x=>fn(snap(x))),docChanges:()=>q.docChanges().map(c=>({type:c.type,id:c.doc.id,data:c.doc.data()}))});
  const doc=r=>({set:(d,o)=>o?M.setDoc(r,d,o):M.setDoc(r,d),update:d=>M.updateDoc(r,d),get:()=>M.getDoc(r).then(snap),onSnapshot:(a,b)=>M.onSnapshot(r,x=>a(snap(x)),b),collection:n=>col(M.collection(r,n))});
- const col=r=>({doc:id=>doc(M.doc(r,id)),get:()=>M.getDocs(r).then(qsnap),onSnapshot:(a,b)=>M.onSnapshot(r,q=>a(qsnap(q)),b)});
+ const qry=q=>({get:()=>M.getDocs(q).then(qsnap),onSnapshot:(a,b)=>M.onSnapshot(q,x=>a(qsnap(x)),b)});
+ const col=r=>Object.assign(qry(r),{doc:id=>doc(M.doc(r,id)),where:(f,o,v)=>qry(M.query(r,M.where(f,o,v))),count:()=>M.getCountFromServer(r).then(x=>x.data().count)});
  return{collection:n=>col(M.collection(fs,n))};
 }
+let PAUTH=null,PDB=null,PUIDP=null;
 function fbInit(){
  if(!FB.apiKey||!FB.projectId)return Promise.resolve(null);
- if(window.firebase&&firebase.firestore){try{if(!firebase.apps.length)firebase.initializeApp(FB);AUTHM=window.__AUTHMOD||null;if(AUTHM)AUTH=AUTHM.getAuth();return Promise.resolve(firebase.firestore());}catch(e){return Promise.resolve(null);}}
+ if(window.firebase&&firebase.firestore){try{if(!firebase.apps.length)firebase.initializeApp(FB);AUTHM=window.__AUTHMOD||null;if(AUTHM)AUTH=AUTHM.getAuth();const f=firebase.firestore();PDB=f;PAUTH=window.__PAUTH||{fake:1};return Promise.resolve(f);}catch(e){return Promise.resolve(null);}}
  const B='https://www.gstatic.com/firebasejs/10.12.2/';
- return Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]).then(m=>{const app=m[0].initializeApp(FB);AUTHM=m[1];AUTH=m[1].getAuth(app);return shim(m[2],m[2].getFirestore(app));}).catch(()=>null);
+ return Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]).then(m=>{const app=m[0].initializeApp(FB);AUTHM=m[1];AUTH=m[1].getAuth(app);const f1=m[2].getFirestore(app);
+  /* App separado para o participante: login anônimo só nesta aba, sem derrubar o login do instrutor */
+  const pa=m[0].initializeApp(FB,'participante');PAUTH=m[1].initializeAuth(pa,{persistence:m[1].browserSessionPersistence});const f2=m[2].getFirestore(pa);
+  if(window.__EMU){[AUTH,PAUTH].forEach(a=>m[1].connectAuthEmulator(a,'http://127.0.0.1:9099',{disableWarnings:true}));[f1,f2].forEach(f=>m[2].connectFirestoreEmulator(f,'127.0.0.1',8080));} /* só nos testes */
+  PDB=shim(m[2],f2);return shim(m[2],f1);}).catch(()=>null);
 }
 const dbp=fbInit();
+/* Métricas de desempenho (lidas pelos testes de carga; custo desprezível) */
+const CSM=window.__CS_METRICS={light:0,heavy:0,heavyMs:0,heavyMax:0,heavyAt:[],changes:0,snaps:0,writes:0,writesOk:0,writesCoalesced:0,counts:0,seen:{}};
+/* Participante: login anônimo do Firebase (um uid por aba). O documento do participante usa esse uid como id. */
+function playerAuth(){
+ if(PUIDP)return PUIDP;
+ PUIDP=dbp.then(db=>{if(!db||!PAUTH)return null;
+  if(PAUTH.fake){let u='';try{u=sessionStorage.getItem('cs_fake_uid')||'';if(!u){u='u'+rid(12);sessionStorage.setItem('cs_fake_uid',u);}}catch(e){u='u'+rid(12);}return u;}
+  return (PAUTH.authStateReady?PAUTH.authStateReady():Promise.resolve()).then(()=>PAUTH.currentUser?PAUTH.currentUser.uid:AUTHM.signInAnonymously(PAUTH).then(c=>c.user.uid));
+ }).catch(e=>{PUIDP=null;throw e;});
+ return PUIDP;}
+const pdb=()=>playerAuth().then(()=>PDB);
+/* Mensagens de erro do Firestore/Auth em português */
+const ecode=e=>String(e&&(e.code||e.message)||'').replace(/^(auth|firestore)\//,'');
+function fsErr(e){const c=ecode(e);
+ if(/permission-denied|PERMISSION_DENIED|insufficient permissions/i.test(c))return 'Acesso negado pelo servidor.';
+ if(/unauthenticated/.test(c))return 'Sessão expirada. Entre novamente.';
+ if(/admin-restricted-operation|operation-not-allowed/.test(c))return 'O login anônimo de participantes não está ativado no Firebase.';
+ if(/unavailable|network|offline/i.test(c))return 'Sem conexão com o servidor.';
+ if(/not-found/.test(c))return 'Turma não encontrada.';
+ return 'Erro do servidor ('+(c||'desconhecido')+').';}
+function pMsg(e){const c=ecode(e);
+ if(c==='closed')return 'Esta turma foi encerrada pelo instrutor. Fale com quem enviou o link.';
+ if(c==='not-found')return 'Turma não encontrada. Confira o link com o instrutor.';
+ if(/permission-denied|PERMISSION_DENIED|insufficient permissions/i.test(c))return 'Suas respostas não estão sendo salvas: a turma foi encerrada ou o acesso foi negado. Avise o instrutor.';
+ if(/admin-restricted-operation|operation-not-allowed/.test(c))return 'O acesso de participantes não está ativado no servidor. Avise o instrutor.';
+ return 'Não foi possível salvar suas respostas agora ('+fsErr(e)+'). Continue: tentamos de novo na próxima resposta.';}
+function pBan(m){const b=document.getElementById('netErr');if(!b)return;b.textContent=m||'';b.hidden=!m;}
 /* ---- Login do instrutor (e-mail + senha + MFA por aplicativo) ---- */
 const authP=dbp.then(db=>new Promise(ok=>{if(!db||!AUTH||!AUTHM){ok();return;}AUTHM.onAuthStateChanged(AUTH,()=>ok(),()=>ok());}));
 function errMsg(x){const c=(x&&x.code||'').replace('auth/','');
@@ -671,16 +716,26 @@ async function lgAct(a){
 const LGSTEP2=a=>a==='signup'?'up':'in';
 function phIds(l){return ITEMS.filter(x=>x.set===l).map(x=>x.id);}
 function phStat(l){const ids=phIds(l);return{h:ids.filter(i=>S.res[i]&&S.res[i].ok).length,t:ids.length};}
+/* C. Gravação do participante: no máximo 1 em andamento; a versão mais nova substitui a pendente */
+const SPQ={busy:false,next:null};
+function progDoc(done){
+ const answers={};let hits=0;Object.keys(S.res).forEach(k=>{answers[k]=S.res[k].ok?1:0;if(S.res[k].ok)hits++;});
+ const s1=phStat(ORD[0]),s2=phStat(ORD[1]);
+ const d={nome:PNAME,score:S.score,hits:hits,answered:Object.keys(S.res).length,total:ITEMS.length,shield:Math.max(0,S.shield),best:S.best,done:!!done,answers:answers,t:Date.now(),ordem:ORD,fase:String(PH),f1h:s1.h,f1t:s1.t,f2h:s2.h,f2t:s2.t};
+ if(F1)d.f1fim=F1.fim;if(PEMAIL)d.email=PEMAIL;return d;}
 function sendProgress(done){
  if(!SID||!PID)return;
- dbp.then(db=>{if(!db)return;
-  const answers={};let hits=0;Object.keys(S.res).forEach(k=>{answers[k]=S.res[k].ok?1:0;if(S.res[k].ok)hits++;});
-  const s1=phStat(ORD[0]),s2=phStat(ORD[1]);
-  const d={nome:PNAME,score:S.score,hits:hits,answered:Object.keys(S.res).length,total:ITEMS.length,shield:Math.max(0,S.shield),best:S.best,done:!!done,answers:answers,t:Date.now(),ordem:ORD,fase:String(PH),f1h:s1.h,f1t:s1.t,f2h:s2.h,f2t:s2.t};
-  if(F1)d.f1fim=F1.fim;if(PEMAIL)d.email=PEMAIL;
-  db.collection('cs_sessions').doc(SID).collection('players').doc(PID).set(d,{merge:true}).catch(()=>{});
- });
+ if(SPQ.next)CSM.writesCoalesced++;
+ SPQ.next={sid:SID,pid:PID,d:progDoc(done)};if(!SPQ.busy)spFlush();
 }
+function spFlush(){
+ const j=SPQ.next;if(!j){SPQ.busy=false;return;}SPQ.next=null;SPQ.busy=true;CSM.writes++;
+ pdb().then(db=>{if(!db)return;return db.collection('cs_sessions').doc(j.sid).collection('players').doc(j.pid).set(j.d,{merge:true}).then(()=>{CSM.writesOk++;pBan('');});})
+  .catch(e=>pBan(pMsg(e))).then(()=>{SPQ.busy=false;if(SPQ.next)spFlush();});
+}
+/* Envio garantido ao sair da página ou trocar de app no celular */
+function spLeave(){const j=SPQ.next;if(!j||!PDB)return;SPQ.next=null;CSM.writes++;try{PDB.collection('cs_sessions').doc(j.sid).collection('players').doc(j.pid).set(j.d,{merge:true}).catch(()=>{});}catch(e){}}
+addEventListener('pagehide',spLeave);document.addEventListener('visibilitychange',()=>{if(document.hidden)spLeave();});
 
 /* ---- Telas de apresentador ---- */
 let spT=0;
@@ -692,7 +747,7 @@ function genQR(){
  setCfg(c.n,c.d);SID=rid(8);
  $('#qrLink').textContent='Link do jogo: '+QURL;$('#dashLink').textContent='Link do painel: '+DURL;
  $('#fbNote').hidden=!!FB.apiKey;$('#fbNote').textContent='Painel da turma desativado: falta configurar o Firebase no início do arquivo do jogo.';
- dbp.then(db=>{if(db)db.collection('cs_sessions').doc(SID).set(Object.assign({empresa:c.n,dominio:c.d,criadoEm:Date.now(),pedeEmail:!!c.pe},AUTH&&AUTH.currentUser&&AUTH.currentUser.email?{dono:AUTH.currentUser.email}:{},ADMNOME?{donoNome:ADMNOME}:{})).catch(()=>{});});
+ dbp.then(db=>{if(!db)return;const u=AUTH&&AUTH.currentUser;db.collection('cs_sessions').doc(SID).set(Object.assign({empresa:c.n,dominio:c.d,criadoEm:Date.now(),pedeEmail:!!c.pe},u&&u.email?{dono:u.email,donoUid:u.uid}:{},ADMNOME?{donoNome:ADMNOME}:{})).catch(e=>{const n=$('#fbNote');n.hidden=false;n.textContent='Atenção: a turma não foi salva no servidor ('+fsErr(e)+') e os participantes não vão conseguir jogar. Entre novamente como instrutor e gere um novo QR Code.';});});
  histAdd(SID,c.n);updHistBtn();showQR(c);
 }
 function showQR(c){
@@ -719,18 +774,22 @@ function demoPlayers(){let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;cons
   const k=i<26?'d':i===26?'dt':i<29?'p2':'p1';
   const f1h=run(ord[0],k==='p1'?7:14,1),f2h=k==='p1'?0:run(ord[1],k==='p2'?5:14,.55);
   return{nome:n,email:n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]+/g,'.')+'@grupomeridiano.com.br',ordem:ord,fase:k==='p1'?'1':'2',score:sc,hits:f1h+f2h,answered:cnt,total:28,shield:100,best:best,done:k==='d'||k==='dt',answers:ans,f1h:f1h,f1t:14,f1fim:k==='p1'?null:(k==='dt'?T+120000:T-Math.floor(r()*900000)),f2h:f2h,f2t:14};});}
-function fbUpd(d,undo){if(CURSID==='demo')return;dbp.then(db=>db&&db.collection('cs_sessions').doc(CURSID).update(d)).catch(e=>{if(undo)undo();renderCtl();const n=$('#cNote');n.textContent='Não foi possível salvar ('+((e&&(e.code||e.message))||'erro')+'). Confira se as regras do Firestore foram publicadas e se você está logado como instrutor.';n.style.color='var(--bad)';setTimeout(()=>{n.style.color='';renderCtl();},12000);});}
+function fbUpd(d,undo){if(CURSID==='demo')return;dbp.then(db=>db&&db.collection('cs_sessions').doc(CURSID).update(d)).catch(e=>{if(undo)undo();renderCtl();const n=$('#cNote');n.textContent='Não foi possível salvar: '+fsErr(e)+' Confira se você está logado como o instrutor que criou esta turma e se as regras do Firestore foram publicadas.';n.style.color='var(--bad)';setTimeout(()=>{n.style.color='';renderCtl();},12000);});}
 function ctlAula(){if(SESS.aulaEm)return;SESS.aulaEm=Date.now();fbUpd({aulaEm:SESS.aulaEm},()=>{SESS.aulaEm=0;});renderDash(LASTP);}
+let ARME=0;
+function ctlEnd(){if(CURSID==='demo')return;if(SESS.encerrada){SESS.encerrada=false;fbUpd({encerrada:false},()=>{SESS.encerrada=true;});renderCtl();return;}if(!ARME){ARME=1;renderCtl();setTimeout(()=>{ARME=0;renderCtl();},4000);return;}ARME=0;SESS.encerrada=true;fbUpd({encerrada:true},()=>{SESS.encerrada=false;});renderCtl();}
 function ctlRel(){if(SESS.fase2)return;if(!ARM){ARM=1;renderCtl();setTimeout(()=>{ARM=0;renderCtl();},4000);return;}ARM=0;const t=Date.now(),u={fase2:true,fase2Em:t};SESS.fase2=true;SESS.fase2Em=t;if(!SESS.aulaEm){SESS.aulaEm=t;u.aulaEm=t;}fbUpd(u,()=>{SESS.fase2=false;SESS.fase2Em=0;if(u.aulaEm)SESS.aulaEm=0;});renderDash(LASTP);}
 function renderCtl(){
  const a=LASTP,n=a.length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length,N=Math.max(n,ESP.length||SESS.esperadas||0),own=isOwner();
  $('#cReady').textContent=ready+' de '+N;$('#cBar').style.width=(N?Math.round(ready/N*100):0)+'%';
- $('#cExpW').hidden=!own;$('#cAula').hidden=!own;$('#cRel').hidden=!own;$('#cOwn').hidden=own;
+ $('#cExpW').hidden=!own;$('#cAula').hidden=!own;$('#cRel').hidden=!own;$('#cEnd').hidden=!own||CURSID==='demo';$('#cOwn').hidden=own;
+ const ce=$('#cEnd'),old=SESS.criadoEm&&Date.now()>SESS.criadoEm+30*864e5;ce.textContent=SESS.encerrada?'Reabrir turma':(ARME?'Clique de novo para encerrar':'Encerrar turma');
  if(document.activeElement!==$('#cExp'))$('#cExp').value=SESS.esperadas||'';
  const ca=$('#cAula'),cr=$('#cRel');
  ca.disabled=!!SESS.aulaEm;ca.textContent=SESS.aulaEm?'Aula iniciada às '+hm(SESS.aulaEm):'Iniciar aula';
  cr.disabled=!!SESS.fase2;cr.textContent=SESS.fase2?'Fase 2 liberada às '+hm(SESS.fase2Em):(ARM?'Clique de novo para confirmar':'Liberar fase 2');
  $('#cNote').textContent=SESS.fase2?'A fase 2 está liberada. Quem terminar a fase 1 agora segue direto para a fase 2.':SESS.aulaEm?'Quem terminar a fase 1 a partir de agora fica fora do comparativo antes x depois.':'Clique em Iniciar aula quando começar a apresentação. Depois, libere a fase 2.';
+ if(SESS.encerrada||old)$('#cNote').textContent=(SESS.encerrada?'Turma encerrada: ninguém consegue mais enviar respostas.':'Esta turma tem mais de 30 dias e não recebe mais respostas.')+' Os resultados continuam salvos.';
 }
 function openDash(sid,name){if(sid==='demo'||ADMIN||!needLogin())return openDash2(sid,name);needAdmin(()=>openDash2(sid,name));}
 function openDash2(sid,name){
@@ -739,17 +798,35 @@ function openDash2(sid,name){
  if(sid==='demo'){$('#dName').textContent='Exemplo para apresentações';$('#dMsg').textContent='Relatório de exemplo com 30 pessoas (dados fictícios), para apresentações.';const d=demoPlayers();$('#dName').textContent='Exemplo para apresentações';ESP=demoEsp(d);renderDash(d);return;}
  dbp.then(db=>{
   if(!db){$('#dMsg').textContent=FB.apiKey?'Não foi possível conectar ao Firebase.':'O painel precisa do Firebase configurado no início do arquivo do jogo.';return;}
-  const u1=db.collection('cs_sessions').doc(sid).onSnapshot(d=>{if(d.exists){const v=d.data();SESS=v||{};if(v.empresa)$('#dName').textContent=v.empresa;if(v.criadoEm)$('#dWhen').textContent='Executado em '+fmtDT(v.criadoEm);renderDash(LASTP);}},()=>{});
-  const u2=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));$('#dMsg').textContent=a.length?'':'Aguardando os primeiros jogadores...';renderDash(dedupe(a));},()=>{$('#dMsg').textContent='Sem permissão ou sem conexão com o painel.';});
-  const u3=db.collection('cs_sessions').doc(sid).collection('esperados').onSnapshot(q=>{const a=[];q.forEach(x=>a.push(x.data()));ESP=a;renderDash(LASTP);},()=>{});
-  DB_UNSUB=()=>{try{u1();}catch(e){}try{u2();}catch(e){}try{u3();}catch(e){}};
+  const u1=db.collection('cs_sessions').doc(sid).onSnapshot(d=>{if(d.exists){const v=d.data();SESS=v||{};if(v.empresa)$('#dName').textContent=v.empresa;if(v.criadoEm)$('#dWhen').textContent='Executado em '+fmtDT(v.criadoEm);schedDash(LASTP);const cu=AUTH&&AUTH.currentUser;if(v&&!v.donoUid&&cu&&v.dono===cu.email)db.collection('cs_sessions').doc(sid).update({donoUid:cu.uid}).catch(()=>{});}else{$('#dMsg').textContent='Turma não encontrada.';}},e=>{$('#dMsg').textContent=fsErr(e)+' Esta turma pode pertencer a outro instrutor.';});
+  /* A. só processa o que mudou (docChanges) e agrupa o redesenho */
+  const PM=new Map();
+  const u2=db.collection('cs_sessions').doc(sid).collection('players').onSnapshot(q=>{CSM.snaps++;
+   const ch=q.docChanges?q.docChanges():null;
+   if(ch){ch.forEach(c=>{CSM.changes++;if(c.type==='removed')PM.delete(c.id);else{PM.set(c.id,c.data);if(!CSM.seen[c.id])CSM.seen[c.id]=Date.now();}});}
+   else{PM.clear();q.forEach(x=>{CSM.changes++;PM.set(x.id||Math.random(),x.data());});}
+   $('#dMsg').textContent=PM.size?'':'Aguardando os primeiros jogadores...';schedDash(dedupe(Array.from(PM.values())));},e=>{$('#dMsg').textContent='Não foi possível ler os participantes: '+fsErr(e)+' Só o instrutor que criou a turma tem acesso.';});
+  loadEsp();
+  DB_UNSUB=()=>{try{u1();}catch(e){}try{u2();}catch(e){}};
  });
 }
-function renderDash(a){
- LASTP=a;const n=a.length,done=a.filter(p=>fz(p)==='d').length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length;
+/* Painel: camada leve (imediata) e camada pesada (no máximo 1 vez a cada 1,5 s) */
+const HEAVY_MS=1500;let HV={t:0,timer:null,pend:false,lastAt:0},LT={raf:0};
+function renderDash(a){renderLight(a);renderHeavy();}
+/* D. lista de esperados: leitura única ao abrir o painel (só o instrutor altera) */
+function loadEsp(){if(!CURSID||CURSID==='demo')return;const m=$('#pMsg');dbp.then(db=>{if(!db)return;return db.collection('cs_sessions').doc(CURSID).collection('esperados').get().then(q=>{const a=[];q.forEach(x=>a.push(x.data()));ESP=a;renderDash(LASTP);});}).catch(e=>{if(m)m.textContent='Não foi possível carregar a lista de esperados: '+fsErr(e);});}
+function schedDash(a){LASTP=a;if(!LT.raf){LT.raf=(window.requestAnimationFrame||setTimeout)(()=>{LT.raf=0;renderLight(LASTP);});}
+ if(HV.timer)return;const w=Math.max(0,HEAVY_MS-(Date.now()-HV.lastAt));HV.timer=setTimeout(()=>{HV.timer=null;if(document.hidden){HV.pend=true;return;}renderHeavy('auto');},w);}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&HV.pend){HV.pend=false;renderHeavy('auto');}});
+function renderLight(a){
+ CSM.light++;LASTP=a;const n=a.length,done=a.filter(p=>fz(p)==='d').length,ready=a.filter(p=>['w','2','d'].indexOf(fz(p))>=0).length;
  const ans=a.reduce((t,p)=>t+(p.answered||0),0),hit=a.reduce((t,p)=>t+(p.hits||0),0);
  $('#dStats').innerHTML=[[n,'jogadores'],[ready,'prontos para a fase 2'],[done,'concluíram'],[ans?Math.round(hit/ans*100)+'%':'–','de acertos da turma']].map(t=>'<div class="dtile"><b>'+t[0]+'</b><span>'+t[1]+'</span></div>').join('');
  renderCtl();
+}
+function renderHeavy(src){
+ const t0=performance.now();HV.lastAt=Date.now();if(HV.timer){clearTimeout(HV.timer);HV.timer=null;}HV.pend=false;
+ const a=LASTP,n=a.length;
  const el=a.filter(p=>fz(p)==='d'&&p.f1h!=null&&p.f2h!=null&&!tardio(p)),late=a.filter(p=>fz(p)==='d'&&tardio(p)).length;
  const h1=el.reduce((t,p)=>t+p.f1h,0),t1=el.reduce((t,p)=>t+p.f1t,0),h2=el.reduce((t,p)=>t+p.f2h,0),t2=el.reduce((t,p)=>t+p.f2t,0);
  const p1=pct(h1,t1),p2=pct(h2,t2),dl=p2-p1;
@@ -771,6 +848,8 @@ function renderDash(a){
  renderPart();
  const f1l=a.filter(p=>fz(p)==='1');
  $('#dF1').innerHTML=f1l.length?f1l.map(p=>'<li class="hd"><span>'+esc(p.nome||'?')+'</span>'+(SESS.aulaEm?'<small>ficará fora do comparativo (a aula já começou)</small>':'')+'</li>').join(''):'<li class="dmsg">Ninguém na fase 1 agora.</li>';
+
+ const ms=performance.now()-t0;CSM.heavy++;CSM.heavyMs+=ms;if(ms>CSM.heavyMax)CSM.heavyMax=ms;if(src==='auto'){if(CSM.heavyAt.length<5000)CSM.heavyAt.push(Date.now());}else CSM.heavyDirect=(CSM.heavyDirect||0)+1;
 }
 /* ---- Relatório profissional (PDF via impressão) ---- */
 const RC={a:'#d97706',b:'#2563eb',ink:'#1b2733',mu:'#5b6b7a',gr:'#e3e8ee',n:'#475569',ok:'#15803d',wr:'#b45309',bd:'#b91c1c',ia:'#6d28d9'};
@@ -931,7 +1010,7 @@ function saveList(){
  if(CURSID==='demo'){ESP=ESP.concat(r.out);renderDash(LASTP);fin();return;}
  m.textContent='Salvando...';
  dbp.then(db=>{if(!db){m.textContent='Sem conexão com o Firebase.';return;}const col=db.collection('cs_sessions').doc(CURSID).collection('esperados');
-  Promise.all(r.out.map(x=>col.doc(x.email).set(x))).then(fin).catch(()=>{m.textContent='Não foi possível salvar. Verifique a conexão e se as regras novas do Firestore foram publicadas.';});});
+  Promise.all(r.out.map(x=>col.doc(x.email).set(x))).then(()=>{const ex={};ESP.forEach(x=>ex[x.email]=1);ESP=ESP.concat(r.out.filter(x=>!ex[x.email]));renderDash(LASTP);fin();}).catch(e=>{m.textContent='Não foi possível salvar: '+fsErr(e)+' Só o instrutor que criou a turma pode editar a lista.';});});
 }
 function copyPend(){
  const l=pendentes().map(x=>x.email),b=$('#pCopy');if(!l.length){b.textContent='Ninguém pendente';setTimeout(()=>b.textContent='Copiar e-mails dos pendentes',2200);return;}
@@ -1124,7 +1203,8 @@ const PK=()=>'cs_p_'+SID;
 function saveP(){if(!SID||!PID)return;try{const r={};Object.keys(S.res).forEach(k=>{const o=S.res[k];r[k]={ok:o.ok?1:0,c:o.choice||'',p:o.pts||0,s:o.st||0};});sessionStorage.setItem(PK(),JSON.stringify({pid:PID,name:PNAME,em:PEMAIL,ord:ORD,ph:PH,f1:F1,order:S.order,set:S.set,streak:S.streak||0,at:S.at||{},score:S.score,best:S.best,shield:S.shield,time:S.time,res:r}));}catch(e){}}
 function loadP(){try{return JSON.parse(sessionStorage.getItem(PK())||'null');}catch(e){return null;}}
 function clearP(){try{sessionStorage.removeItem(PK());}catch(e){}}
-function afterSplash(){const p=SID&&loadP();if(p&&p.pid&&p.ord&&(p.ph===1||p.ph===2)){restoreMid(p);}else if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');}
+function afterSplash(){const p=SID&&loadP(),go=()=>{if(p&&p.pid&&p.ord&&(p.ph===1||p.ph===2)){restoreMid(p);}else if(p&&p.f1&&p.pid&&p.ord){restoreWait(p);}else show('intro');};
+ if(p&&p.pid)playerAuth().then(u=>{if(u)p.pid=u;go();}).catch(()=>go());else go();}
 const rr=r=>typeof r==='object'&&r?{ok:!!r.ok,choice:r.c||'',pts:r.p||0,st:r.s||0}:{ok:!!r,choice:'',pts:0,st:0};
 function restoreMid(p){PID=p.pid;PNAME=p.name;PEMAIL=p.em||'';ORD=p.ord;PH=p.ph;F1=p.f1||null;LAST={};init();if(p.order&&p.order.length)S.order=p.order;S.set=(p.set&&p.set.length?p.set:S.order).slice();S.score=p.score||0;S.best=p.best||0;S.shield=p.shield==null?100:p.shield;S.time=p.time||540;S.streak=p.streak||0;S.at=p.at||{};Object.keys(p.res||{}).forEach(k=>{S.res[k]=rr(p.res[k]);});S.arrived=S.set.filter(i=>S.res[i]);S.cur=S.arrived.length;
  SCR.forEach(i=>{$('#'+i).hidden=true;});$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;sendProgress(false);ac();updHud();setPhl();setShield();clock();render();setTimeout(next,700);}
@@ -1137,16 +1217,17 @@ function setRel(v){
 function watchRel(){
  if(WAIT_UNSUB){WAIT_UNSUB();WAIT_UNSUB=null;}
  if(!SID){setRel(true);return;}
- dbp.then(db=>{
+ pdb().then(db=>{
   if(!db){setRel(true);return;}
-  WAIT_UNSUB=db.collection('cs_sessions').doc(SID).onSnapshot(d=>{$('#wErr').hidden=true;const v=d.exists?d.data():null;if(v&&v.fase2)setRel(true);},()=>{$('#wErr').hidden=false;});
- });
+  let stop=false;WAIT_UNSUB=db.collection('cs_sessions').doc(SID).onSnapshot(d=>{const v=d.exists?d.data():null,w=$('#wErr');if(v&&v.encerrada){w.textContent='Esta turma foi encerrada pelo instrutor.';w.hidden=false;return;}w.hidden=true;if(v&&v.fase2){setRel(true);stop=true;if(WAIT_UNSUB){WAIT_UNSUB();WAIT_UNSUB=null;}}},e=>{const w=$('#wErr');w.textContent=fsErr(e)+' Vamos continuar tentando.';w.hidden=false;});
+  if(stop&&WAIT_UNSUB){WAIT_UNSUB();WAIT_UNSUB=null;}
+ }).catch(e=>{const w=$('#wErr');w.textContent=pMsg(e);w.hidden=false;});
 }
 function chkRel(){
  if(!SID){setRel(true);return;}
- dbp.then(db=>{if(!db){setRel(true);return;}
-  db.collection('cs_sessions').doc(SID).get().then(d=>{$('#wErr').hidden=true;if(d.exists&&d.data().fase2)setRel(true);else{$('#chk2').textContent='Ainda não foi liberado. Aguarde.';setTimeout(()=>{$('#chk2').textContent='Já foi liberado? Verificar';},2500);}}).catch(()=>{$('#wErr').hidden=false;});
- });
+ pdb().then(db=>{if(!db){setRel(true);return;}
+  db.collection('cs_sessions').doc(SID).get().then(d=>{$('#wErr').hidden=true;if(d.exists&&d.data().fase2)setRel(true);else{$('#chk2').textContent='Ainda não foi liberado. Aguarde.';setTimeout(()=>{$('#chk2').textContent='Já foi liberado? Verificar';},2500);}}).catch(e=>{const w=$('#wErr');w.textContent=fsErr(e);w.hidden=false;});
+ }).catch(e=>{const w=$('#wErr');w.textContent=pMsg(e);w.hidden=false;});
 }
 function openWait(){
  show('wait');RELEASED=false;
@@ -1217,11 +1298,15 @@ function aulaGo(d){ac();const n=AS.length;if(AI+d>=n)return afterAula();AI=Math.
 document.addEventListener('keydown',e=>{if($('#aula').hidden)return;if(e.key==='ArrowRight')aulaGo(1);if(e.key==='ArrowLeft'&&AI)aulaGo(-1);});
 function start(){
  const nm=($('#inPlayer').value||'').replace(/\s+/g,' ').trim().slice(0,30);
- if(nm.length<2){$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
+ if(nm.length<2){$('#nameErr').textContent='Digite seu nome para começar.';$('#nameErr').hidden=false;$('#inPlayer').focus();return;}
  PEMAIL='';if(PE){const u=($('#inEmail').value||'').trim().toLowerCase().replace(/@.*$/,'');if(!/^[a-z0-9._-]{1,64}$/.test(u)){$('#emErr').hidden=false;$('#inEmail').focus();return;}PEMAIL=u+'@'+DOM;}
- PNAME=nm;begin();}
+ PNAME=nm;const b=$('#start'),rs=()=>{b.disabled=false;b.textContent='Começar o treinamento';};b.disabled=true;b.textContent='Conectando...';
+ playerAuth().then(u=>{PID=u||null;return SID?pdb().then(db=>db?db.collection('cs_sessions').doc(SID).get():null):null;}).then(d=>{
+  if(d&&!d.exists)throw{code:'not-found'};const v=d&&d.data?d.data():null;
+  if(v&&(v.encerrada||(v.criadoEm&&Date.now()>v.criadoEm+30*864e5)))throw{code:'closed'};
+  rs();$('#nameErr').hidden=true;begin();}).catch(e=>{rs();$('#nameErr').textContent=pMsg(e);$('#nameErr').hidden=false;});}
 function begin(){
- PID=rid(10);LAST={};PH=1;F1=null;ORD=PID.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%2?'AB':'BA';
+ if(!PID)PID=rid(10);LAST={};PH=1;F1=null;ORD=PID.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%2?'AB':'BA';
  init();sendProgress(false);saveP();ac();updHud();setPhl();$('#aula').hidden=true;$('#intro').hidden=true;$('#end').hidden=true;$('#desk').hidden=false;$('#win').hidden=true;$('#pop').hidden=true;$('#toast').hidden=true;setShield();clock();render();setTimeout(next,700);}
 
 document.addEventListener('click',e=>{
@@ -1239,6 +1324,7 @@ document.addEventListener('click',e=>{
  if(e.target.id==='btnDash'){BACKTO='qrs';return openDash(SID,RAWN);}
  if(e.target.id==='histBtn')return openHist();
  if(e.target.id==='histBack')return show('setup');
+ if(e.target.id==='histMore'){HP++;return window.__histPaint&&window.__histPaint(HLIST);}
  {const hi=e.target.closest('.hitem');if(hi){BACKTO='hist';return openDash(hi.dataset.sid,hi.dataset.n);}
   const hd=e.target.closest('.hdel');if(hd){histSet(histGet().filter(x=>x.sid!==hd.dataset.del));openHist();updHistBtn();return;}}
  if(e.target.id==='dBack'){return BACKTO==='hist'?openHist():show(BACKTO);}
@@ -1261,6 +1347,8 @@ document.addEventListener('click',e=>{
  if(e.target.id==='chk2')return chkRel();
  if(e.target.id==='cAula')return ctlAula();
  if(e.target.id==='cRel')return ctlRel();
+ if(e.target.id==='cEnd')return ctlEnd();
+ if(e.target.id==='pRef')return loadEsp();
  
  if(e.target.id==='start'||e.target.id==='again')return start();
  const l=e.target.closest('.lnk');
@@ -1285,3 +1373,4 @@ document.addEventListener('change',e=>{if(e.target.id==='pFil'){PFIL=e.target.va
 document.addEventListener('mouseover',e=>{const l=e.target.closest('.lnk');if(l)stat(l.dataset.url);});
 document.addEventListener('mouseout',e=>{if(e.target.closest('.lnk'))stat(null);});
 </script>
+<div id="netErr" role="alert" hidden></div>
